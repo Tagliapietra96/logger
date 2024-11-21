@@ -6,6 +6,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 const table = `
@@ -131,7 +133,7 @@ func queryLogs(configs ...QueryConfiguration) ([]*Log, error) {
 		return nil, err
 	}
 	defer db.Close()
-	var query *strings.Builder
+	query := new(strings.Builder)
 	query.WriteString(defaultQuery)
 	for _, config := range configs {
 		config(query)

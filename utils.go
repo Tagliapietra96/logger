@@ -76,18 +76,18 @@ func printLogs(logs []*Log) {
 
 	for _, log := range logs {
 		var sb strings.Builder
-		if timeWidth > 0 {
+		if timeWidth > 2 {
 			sb.WriteString(addRigthPadding(fmt.Sprintf("[%s]", log.Timestamp), timeWidth))
 		}
 
-		if weekdayWidth > 0 {
+		if weekdayWidth > 2 {
 			t, _ := time.Parse("2006-01-02 15:04:05", log.Timestamp)
 			wd := t.Weekday().String()
 			sb.WriteString(addRigthPadding(fmt.Sprintf("[%s]", wd), weekdayWidth))
 			sb.WriteString(" ")
 		}
 
-		if contextWidth > 0 {
+		if contextWidth > 2 {
 			sb.WriteString(addRigthPadding(fmt.Sprintf("[%s]", log.Context), contextWidth))
 			sb.WriteString(" ")
 		}
@@ -97,7 +97,7 @@ func printLogs(logs []*Log) {
 			sb.WriteString(" ")
 		}
 
-		if callerWidth > 0 {
+		if callerWidth > 9 {
 			sb.WriteString(addRigthPadding(fmt.Sprintf("[%s:%d - function: %s]", log.CallerFile, log.CallerLine, log.CallerFunction), callerWidth))
 			sb.WriteString(" ")
 		}

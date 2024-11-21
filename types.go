@@ -396,6 +396,12 @@ func prepareSort(config QueryConfiguration) QueryConfiguration {
 			sb.WriteString(base)
 		}
 
+		if !strings.Contains(s, " ORDER BY ") {
+			sb.WriteString(" ORDER BY ")
+		} else {
+			sb.WriteString(", ")
+		}
+
 		config(sb)
 
 		if limit != "" {
@@ -450,9 +456,9 @@ func AddLimit(limitAndOffset ...int) QueryConfiguration {
 	}
 }
 
-func FilterByStatus(status LogStatus, operator NumericOperator) QueryConfiguration {
+func FilterByStatus(status LogStatus) QueryConfiguration {
 	return prepareFilter(func(sb *strings.Builder) {
-		sb.WriteString(fmt.Sprintf("%s %s %d", STATUS.String(), operator.op(), status))
+		sb.WriteString(fmt.Sprintf("%s = %d", STATUS.String(), status))
 	})
 }
 
