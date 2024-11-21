@@ -4,35 +4,35 @@ import (
 	"testing"
 )
 
-func TestNewLogOpts(t *testing.T) {
-	opts := NewLogOpts()
+func TestNewOpts(t *testing.T) {
+	opts := NewOpts()
 	if opts == nil {
-		t.Error("NewLogOpts() should return a valid pointer to Options")
+		t.Error("NewOpts() should return a valid pointer to Options")
 	}
 }
 
 func TestDeb(t *testing.T) {
-	opts := NewLogOpts()
+	opts := NewOpts()
 	Deb(opts, "This is a debug message")
 }
 
 func TestInf(t *testing.T) {
-	opts := NewLogOpts()
+	opts := NewOpts()
 	Inf(opts, "This is an info message")
 }
 
 func TestWar(t *testing.T) {
-	opts := NewLogOpts()
+	opts := NewOpts()
 	War(opts, "This is a warning message")
 }
 
 func TestErr(t *testing.T) {
-	opts := NewLogOpts()
+	opts := NewOpts()
 	Err(opts, "This is an error message")
 }
 
 func TestFat(t *testing.T) {
-	opts := NewLogOpts()
+	opts := NewOpts()
 	Fat(opts, nil)
 }
 
@@ -47,32 +47,32 @@ func TestGetCaller(t *testing.T) {
 }
 
 func TestPrintDeb(t *testing.T) {
-	opts := NewLogOpts()
+	opts := NewOpts()
 	PrintDeb(opts, "This is a debug message")
 }
 
 func TestPrintInf(t *testing.T) {
-	opts := NewLogOpts()
+	opts := NewOpts()
 	PrintInf(opts, "This is an info message")
 }
 
 func TestPrintWar(t *testing.T) {
-	opts := NewLogOpts()
+	opts := NewOpts()
 	PrintWar(opts, "This is a warning message")
 }
 
 func TestPrintErr(t *testing.T) {
-	opts := NewLogOpts()
+	opts := NewOpts()
 	PrintErr(opts, "This is an error message")
 }
 
 func TestPrintFat(t *testing.T) {
-	opts := NewLogOpts()
+	opts := NewOpts()
 	PrintFat(opts, nil)
 }
 
 func TestCreateNewLog(t *testing.T) {
-	opts := NewLogOpts()
+	opts := NewOpts()
 	c, err := getCaller()
 	if err != nil {
 		t.Error("getCaller() should not return an error")

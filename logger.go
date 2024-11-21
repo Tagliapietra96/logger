@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"os"
 	"time"
+
+	"github.com/gen2brain/beeep"
 )
 
-func NewLogOpts(configurations ...OptionConfiguration) *Options {
+func NewOpts(configurations ...OptionConfiguration) *Options {
 	opts := new(Options)
 	opts.UseBinaryFolder(false)
 	opts.Context("")
@@ -20,81 +22,71 @@ func NewLogOpts(configurations ...OptionConfiguration) *Options {
 	return opts
 }
 
-func Deb(opts *Options, message string, args ...any) {
+func Deb(opts *Options, message string, args ...any) error {
 	formattedMessage := fmt.Sprintf(message, args...)
 	caller, err := getCaller()
 	if err != nil {
-		fmt.Println("ERROR: [logger-pkg] failed to get the caller information")
+		return err
 	}
 
-	err = createNewLog(opts, DEBUG, caller, formattedMessage)
-	if err != nil {
-		fmt.Println("ERROR: " + err.Error())
-	}
+	return createNewLog(opts, DEBUG, caller, formattedMessage)
 }
 
-func Inf(opts *Options, message string, args ...any) {
+func Inf(opts *Options, message string, args ...any) error {
 	formattedMessage := fmt.Sprintf(message, args...)
 	caller, err := getCaller()
 	if err != nil {
-		fmt.Println("ERROR: [logger-pkg] failed to get the caller information")
+		return err
 	}
 
-	err = createNewLog(opts, INFO, caller, formattedMessage)
-	if err != nil {
-		fmt.Println("ERROR: " + err.Error())
-	}
+	return createNewLog(opts, INFO, caller, formattedMessage)
 }
 
-func War(opts *Options, message string, args ...any) {
+func War(opts *Options, message string, args ...any) error {
 	formattedMessage := fmt.Sprintf(message, args...)
 	caller, err := getCaller()
 	if err != nil {
-		fmt.Println("ERROR: [logger-pkg] failed to get the caller information")
+		return err
 	}
 
-	err = createNewLog(opts, WARNING, caller, formattedMessage)
-	if err != nil {
-		fmt.Println("ERROR: " + err.Error())
-	}
+	return createNewLog(opts, WARNING, caller, formattedMessage)
 }
 
-func Err(opts *Options, message string, args ...any) {
+func Err(opts *Options, message string, args ...any) error {
 	formattedMessage := fmt.Sprintf(message, args...)
 	caller, err := getCaller()
 	if err != nil {
-		fmt.Println("ERROR: [logger-pkg] failed to get the caller information")
+		return err
 	}
 
-	err = createNewLog(opts, ERROR, caller, formattedMessage)
-	if err != nil {
-		fmt.Println("ERROR: " + err.Error())
-	}
+	return createNewLog(opts, ERROR, caller, formattedMessage)
 }
 
-func Fat(opts *Options, err error) {
-	if err == nil {
-		return
+func Fat(opts *Options, e error) error {
+	if e == nil {
+		return nil
 	}
 
 	caller, err := getCaller()
 	if err != nil {
-		fmt.Println("ERROR: [logger-pkg] failed to get the caller information")
+		return err
 	}
 
-	err = createNewLog(opts, FATAL, caller, err.Error())
+	err = createNewLog(opts, FATAL, caller, e.Error())
 	if err != nil {
-		fmt.Println("ERROR: " + err.Error())
+		return err
 	}
 
+	beeep.Alert(opts.GetDefaultFatalTitle(), opts.GetDefaultFatalMessage(), "")
 	os.Exit(1)
+	return nil
 }
 
-func PrintDeb(opts *Options, message string, args ...any) {
+func PrintDeb(opts *Options, message string, args ...any) error {
 	formattedMessage := fmt.Sprintf(message, args...)
 	caller, err := getCaller()
 	if err != nil {
-		fmt.Println("ERROR: [logger-pkg] failed to get the caller information")
+		return err
 	}
 
 	l := &Log{
@@ -108,13 +100,14 @@ func PrintDeb(opts *Options, message string, args ...any) {
 	}
 
 	printLogs([]*Log{l})
+	return nil
 }
 
-func PrintInf(opts *Options, message string, args ...any) {
+func PrintInf(opts *Options, message string, args ...any) error {
 	formattedMessage := fmt.Sprintf(message, args...)
 	caller, err := getCaller()
 	if err != nil {
-		fmt.Println("ERROR: [logger-pkg] failed to get the caller information")
+		return err
 	}
 
 	l := &Log{
@@ -128,13 +121,14 @@ func PrintInf(opts *Options, message string, args ...any) {
 	}
 
 	printLogs([]*Log{l})
+	return nil
 }
 
-func PrintWar(opts *Options, message string, args ...any) {
+func PrintWar(opts *Options, message string, args ...any) error {
 	formattedMessage := fmt.Sprintf(message, args...)
 	caller, err := getCaller()
 	if err != nil {
-		fmt.Println("ERROR: [logger-pkg] failed to get the caller information")
+		return err
 	}
 
 	l := &Log{
@@ -148,13 +142,14 @@ func PrintWar(opts *Options, message string, args ...any) {
 	}
 
 	printLogs([]*Log{l})
+	return nil
 }
 
-func PrintErr(opts *Options, message string, args ...any) {
+func PrintErr(opts *Options, message string, args ...any) error {
 	formattedMessage := fmt.Sprintf(message, args...)
 	caller, err := getCaller()
 	if err != nil {
-		fmt.Println("ERROR: [logger-pkg] failed to get the caller information")
+		return err
 	}
 
 	l := &Log{
@@ -168,16 +163,17 @@ func PrintErr(opts *Options, message string, args ...any) {
 	}
 
 	printLogs([]*Log{l})
+	return nil
 }
 
-func PrintFat(opts *Options, err error) {
-	if err == nil {
-		return
+func PrintFat(opts *Options, e error) error {
+	if e == nil {
+		return nil
 	}
 
 	caller, err := getCaller()
 	if err != nil {
-		fmt.Println("ERROR: [logger-pkg] failed to get the caller information")
+		return err
 	}
 
 	l := &Log{
@@ -186,20 +182,21 @@ func PrintFat(opts *Options, err error) {
 		CallerFile:     caller.file,
 		CallerLine:     caller.line,
 		CallerFunction: caller.funcion,
-		Message:        err.Error(),
+		Message:        e.Error(),
 		Timestamp:      time.Now().Format("2006-01-02 15:04:05"),
 	}
 
 	printLogs([]*Log{l})
 	os.Exit(1)
+	return nil
 }
 
-func PrintLogs(queryConfigs ...QueryConfiguration) {
+func PrintLogs(queryConfigs ...QueryConfiguration) error {
 	logs, err := queryLogs(queryConfigs...)
 	if err != nil {
-		fmt.Println("ERROR: " + err.Error())
-		return
+		return err
 	}
 
 	printLogs(logs)
+	return nil
 }
