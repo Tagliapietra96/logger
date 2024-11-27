@@ -11,23 +11,6 @@ import (
 	"github.com/charmbracelet/x/term"
 )
 
-func Test() {
-	logs := make([]*log, 0)
-	for i := 0; i < 5; i++ {
-		logs = append(logs, &log{
-			level:          Info,
-			timestamp:      newTimestamp("2021-08-01 15:04:05"),
-			message:        fmt.Sprintf("This is an info log message %d", i),
-			callerFile:     "main.go",
-			callerLine:     10,
-			callerFunction: "main.main",
-			tags:           []string{"tag1", "tag2"},
-		})
-	}
-
-	printLogs(logs)
-}
-
 // getTerminalSize function returns the width and height of the terminal.
 // It returns the width and height of the terminal as integers.
 // If the terminal size cannot be determined, it returns 0, 0.
@@ -95,4 +78,5 @@ func printLogs(logs []*log) {
 	}
 
 	fmt.Print(page.String())
+	println("")
 }

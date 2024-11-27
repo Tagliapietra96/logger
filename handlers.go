@@ -107,7 +107,7 @@ func createNewLog(opts *Logger, level LogLevel, caller *caller, message string) 
 		return errors.New("[logger-pkg] failed to create a new log: " + err.Error())
 	}
 
-	stmt, err := tx.Prepare("INSERT INTO logs (level, context, caller_file, caller_line, caller_function, message) VALUES (?, ?, ?, ?, ?, ?);")
+	stmt, err := tx.Prepare("INSERT INTO logs (level, tags, caller_file, caller_line, caller_function, message) VALUES (?, ?, ?, ?, ?, ?);")
 	if err != nil {
 		return errors.New("[logger-pkg] failed to create a new log: " + err.Error())
 	}
