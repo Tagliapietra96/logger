@@ -4,6 +4,7 @@ go 1.22.1
 
 require (
 	github.com/charmbracelet/lipgloss v1.0.0
+	github.com/gen2brain/beeep v0.0.0-20240516210008-9c006672e7f4
 	github.com/mattn/go-runewidth v0.0.15
 	github.com/mattn/go-sqlite3 v1.14.24
 )
@@ -11,7 +12,6 @@ require (
 require (
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/charmbracelet/x/ansi v0.4.2 // indirect
-	github.com/gen2brain/beeep v0.0.0-20240516210008-9c006672e7f4 // indirect
 	github.com/go-toast/toast v0.0.0-20190211030409-01e6764cf0a4 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect

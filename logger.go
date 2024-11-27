@@ -1,4 +1,4 @@
-package logs
+package logger
 
 import (
 	"fmt"
@@ -8,61 +8,100 @@ import (
 	"github.com/gen2brain/beeep"
 )
 
-func NewOpts(configurations ...OptionConfiguration) *Options {
-	opts := new(Options)
-	opts.UseBinaryFolder(false)
-	opts.Context("")
-	opts.DefaultFatalMessage("An error occurred, please check the logs for more information")
-	opts.DefaultFatalTitle("FATAL")
+func New(useBinaryFolder bool, tags ...string) *Logger {
+	l := new(Logger)
+	l.useBinaryFolder = useBinaryFolder
+	l.showCaller = ShowCallerFile
+	l.showTimestamp = ShowDateTime
+	l.showTags = false
+	l.fatalTitle = "Fatal"
+	l.fatalMessage = "An error occurred, please check the logs for more information"
+	l.tags = make([]string, 0)
 
-	for _, config := range configurations {
-		config(opts)
+	if len(tags) > 0 {
+		l.showTags = true
+		l.tags = tags
 	}
 
-	return opts
+	return l
 }
 
-func Deb(opts *Options, message string, args ...any) error {
+type Logger struct {
+	useBinaryFolder bool
+	showTags        bool
+	showCaller      ShowCallerLevel
+	showTimestamp   ShowTimestampLevel
+	tags            []string
+	fatalTitle      string
+	fatalMessage    string
+}
+
+func (opts *Logger) BinaryFolder(use bool) {
+	opts.useBinaryFolder = use
+}
+
+func (opts *Logger) Caller(level ShowCallerLevel) {
+	opts.showCaller = level
+}
+
+func (opts *Logger) Timestamp(level ShowTimestampLevel) {
+	opts.showTimestamp = level
+}
+
+func (opts *Logger) ShowTags(show bool) {
+	opts.showTags = show
+}
+
+func (opts *Logger) Tags(tags ...string) {
+	opts.tags = append(opts.tags, tags...)
+}
+
+func (opts *Logger) SetFatal(title, message string) {
+	opts.fatalTitle = title
+	opts.fatalMessage = message
+}
+
+func (opts *Logger) Debug(message string, args ...any) error {
 	formattedMessage := fmt.Sprintf(message, args...)
 	caller, err := getCaller()
 	if err != nil {
 		return err
 	}
 
-	return createNewLog(opts, DEBUG, caller, formattedMessage)
+	return createNewLog(opts, Debug, caller, formattedMessage)
 }
 
-func Inf(opts *Options, message string, args ...any) error {
+func (opts *Logger) Info(message string, args ...any) error {
 	formattedMessage := fmt.Sprintf(message, args...)
 	caller, err := getCaller()
 	if err != nil {
 		return err
 	}
 
-	return createNewLog(opts, INFO, caller, formattedMessage)
+	return createNewLog(opts, Info, caller, formattedMessage)
 }
 
-func War(opts *Options, message string, args ...any) error {
+func (opts *Logger) Warn(message string, args ...any) error {
 	formattedMessage := fmt.Sprintf(message, args...)
 	caller, err := getCaller()
 	if err != nil {
 		return err
 	}
 
-	return createNewLog(opts, WARNING, caller, formattedMessage)
+	return createNewLog(opts, Warning, caller, formattedMessage)
 }
 
-func Err(opts *Options, message string, args ...any) error {
+func (opts *Logger) Error(message string, args ...any) error {
 	formattedMessage := fmt.Sprintf(message, args...)
 	caller, err := getCaller()
 	if err != nil {
 		return err
 	}
 
-	return createNewLog(opts, ERROR, caller, formattedMessage)
+	return createNewLog(opts, Error, caller, formattedMessage)
 }
 
-func Fat(opts *Options, e error) error {
+func (opts *Logger) Fatal(e error) error {
 	if e == nil {
 		return nil
 	}
@@ -72,101 +111,101 @@ func Fat(opts *Options, e error) error {
 		return err
 	}
 
-	err = createNewLog(opts, FATAL, caller, e.Error())
+	err = createNewLog(opts, Fatal, caller, e.Error())
 	if err != nil {
 		return err
 	}
 
-	beeep.Alert(opts.GetDefaultFatalTitle(), opts.GetDefaultFatalMessage(), "")
+	beeep.Alert(opts.fatalTitle, opts.fatalMessage, "")
 	os.Exit(1)
 	return nil
 }
 
-func PrintDeb(opts *Options, message string, args ...any) error {
+func (opts *Logger) PrintDebug(message string, args ...any) error {
 	formattedMessage := fmt.Sprintf(message, args...)
 	caller, err := getCaller()
 	if err != nil {
 		return err
 	}
 
-	l := &Log{
-		Status:         DEBUG,
-		Context:        opts.GetContext(),
-		CallerFile:     caller.file,
-		CallerLine:     caller.line,
-		CallerFunction: caller.funcion,
-		Message:        formattedMessage,
-		Timestamp:      time.Now().Format("2006-01-02 15:04:05"),
+	l := &log{
+		level:          Debug,
+		tags:           opts.tags,
+		callerFile:     caller.file,
+		callerLine:     caller.line,
+		callerFunction: caller.funcion,
+		message:        formattedMessage,
+		timestamp:      timestamp(time.Now()),
 	}
 
-	printLogs([]*Log{l})
+	printLogs([]*log{l})
 	return nil
 }
 
-func PrintInf(opts *Options, message string, args ...any) error {
+func (opts *Logger) PrintInfo(message string, args ...any) error {
 	formattedMessage := fmt.Sprintf(message, args...)
 	caller, err := getCaller()
 	if err != nil {
 		return err
 	}
 
-	l := &Log{
-		Status:         INFO,
-		Context:        opts.GetContext(),
-		CallerFile:     caller.file,
-		CallerLine:     caller.line,
-		CallerFunction: caller.funcion,
-		Message:        formattedMessage,
-		Timestamp:      time.Now().Format("2006-01-02 15:04:05"),
+	l := &log{
+		level:          Info,
+		tags:           opts.tags,
+		callerFile:     caller.file,
+		callerLine:     caller.line,
+		callerFunction: caller.funcion,
+		message:        formattedMessage,
+		timestamp:      timestamp(time.Now()),
 	}
 
-	printLogs([]*Log{l})
+	printLogs([]*log{l})
 	return nil
 }
 
-func PrintWar(opts *Options, message string, args ...any) error {
+func (opts *Logger) PrintWarn(message string, args ...any) error {
 	formattedMessage := fmt.Sprintf(message, args...)
 	caller, err := getCaller()
 	if err != nil {
 		return err
 	}
 
-	l := &Log{
-		Status:         WARNING,
-		Context:        opts.GetContext(),
-		CallerFile:     caller.file,
-		CallerLine:     caller.line,
-		CallerFunction: caller.funcion,
-		Message:        formattedMessage,
-		Timestamp:      time.Now().Format("2006-01-02 15:04:05"),
+	l := &log{
+		level:          Warning,
+		tags:           opts.tags,
+		callerFile:     caller.file,
+		callerLine:     caller.line,
+		callerFunction: caller.funcion,
+		message:        formattedMessage,
+		timestamp:      timestamp(time.Now()),
 	}
 
-	printLogs([]*Log{l})
+	printLogs([]*log{l})
 	return nil
 }
 
-func PrintErr(opts *Options, message string, args ...any) error {
+func (opts *Logger) PrintError(message string, args ...any) error {
 	formattedMessage := fmt.Sprintf(message, args...)
 	caller, err := getCaller()
 	if err != nil {
 		return err
 	}
 
-	l := &Log{
-		Status:         ERROR,
-		Context:        opts.GetContext(),
-		CallerFile:     caller.file,
-		CallerLine:     caller.line,
-		CallerFunction: caller.funcion,
-		Message:        formattedMessage,
-		Timestamp:      time.Now().Format("2006-01-02 15:04:05"),
+	l := &log{
+		level:          Error,
+		tags:           opts.tags,
+		callerFile:     caller.file,
+		callerLine:     caller.line,
+		callerFunction: caller.funcion,
+		message:        formattedMessage,
+		timestamp:      timestamp(time.Now()),
 	}
 
-	printLogs([]*Log{l})
+	printLogs([]*log{l})
 	return nil
 }
 
-func PrintFat(opts *Options, e error) error {
+func (opts *Logger) PrintFatal(e error) error {
 	if e == nil {
 		return nil
 	}
@@ -176,22 +215,22 @@ func PrintFat(opts *Options, e error) error {
 		return err
 	}
 
-	l := &Log{
-		Status:         FATAL,
-		Context:        opts.GetContext(),
-		CallerFile:     caller.file,
-		CallerLine:     caller.line,
-		CallerFunction: caller.funcion,
-		Message:        e.Error(),
-		Timestamp:      time.Now().Format("2006-01-02 15:04:05"),
+	l := &log{
+		level:          Fatal,
+		tags:           opts.tags,
+		callerFile:     caller.file,
+		callerLine:     caller.line,
+		callerFunction: caller.funcion,
+		message:        e.Error(),
+		timestamp:      timestamp(time.Now()),
 	}
 
-	printLogs([]*Log{l})
+	printLogs([]*log{l})
 	os.Exit(1)
 	return nil
 }
 
-func PrintLogs(queryConfigs ...QueryConfiguration) error {
+func (opts *Logger) PrintLogs(queryConfigs ...QueryConfiguration) error {
 	logs, err := queryLogs(queryConfigs...)
 	if err != nil {
 		return err
