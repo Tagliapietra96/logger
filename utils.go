@@ -11,6 +11,23 @@ import (
 	"github.com/charmbracelet/x/term"
 )
 
+func Test() {
+	logs := make([]*log, 0)
+	for i := 0; i < 5; i++ {
+		logs = append(logs, &log{
+			level:          Info,
+			timestamp:      newTimestamp("2021-08-01 15:04:05"),
+			message:        fmt.Sprintf("This is an info log message %d", i),
+			callerFile:     "main.go",
+			callerLine:     10,
+			callerFunction: "main.main",
+			tags:           []string{"tag1", "tag2"},
+		})
+	}
+
+	printLogs(logs)
+}
+
 // getTerminalSize function returns the width and height of the terminal.
 // It returns the width and height of the terminal as integers.
 // If the terminal size cannot be determined, it returns 0, 0.
@@ -24,17 +41,16 @@ func getTerminalSize() (int, int) {
 }
 
 func printLogs(logs []*log) {
-	w := 120
+	w := 100
 	tw, _ := getTerminalSize()
 	if tw > 0 && tw < w {
-		w = tw
+		w = tw - 4
 	}
-	page := tui.NewStyle(opts.Margin(1, 2), opts.FitWidth(w))
-	ls := make([]string, len(logs))
+	page := tui.NewStyle(opts.Margin(1, 2, 1, 1), opts.Width(w))
 	for _, log := range logs {
 		l := tui.NewStyle(opts.Padding(0, 1))
 		l = l.Border(lipgloss.RoundedBorder(), true)
-		tui.Config(&l, opts.FitWidth(w-2))
+		tui.Config(&l, opts.FitWidth(w))
 		color := tui.ColorMuted
 		switch log.level {
 		case Debug:
@@ -51,21 +67,32 @@ func printLogs(logs []*log) {
 
 		tui.Config(&l, opts.Color(nil, nil, color))
 
-		logTitle := tui.NewStyle(opts.Color(nil, nil, tui.ColorLightMuted)).Border(lipgloss.NormalBorder(), false, false, true, false)
+		logTitle := tui.NewStyle(opts.Color(nil, nil, tui.ColorMuted), opts.Width(w-4)).Border(lipgloss.NormalBorder(), false, false, true, false)
 		level := tui.Render(log.level.String(), opts.Color(color))
-		timestamp := tui.Render(log.timestamp.String(), opts.Color(tui.ColorMuted), opts.Right, opts.Width(w-4-lipgloss.Width(level)))
+		timestamp := tui.Render(log.timestamp.String(), opts.Color(tui.ColorMuted), opts.Right)
 		caller := tui.Render(fmt.Sprintf("at %s:%d - %s", filepath.Base(log.callerFile), log.callerLine, log.callerFunction), opts.Color(tui.ColorMuted), opts.Left)
 		tags := tui.NewStyle(opts.Color(tui.ColorLightMuted), opts.Right)
 		for _, tag := range log.tags {
-			tui.Concat(&tags, fmt.Sprintf("🔖 %s", tag))
+			tui.ConcatWith(&tags, " ･ ", fmt.Sprintf("🔖 %s", tag))
 		}
-		tui.Config(&tags, opts.Width(w-4-lipgloss.Width(caller)))
-		tui.Concat(&logTitle, level, timestamp, "\n", caller, tags.String())
+		tui.ConcatLn(
+			&logTitle,
+			lipgloss.JoinHorizontal(lipgloss.Top,
+				level,
+				lipgloss.PlaceHorizontal(w-4-lipgloss.Width(level)-lipgloss.Width(timestamp), lipgloss.Center, ""),
+				timestamp,
+			),
+			lipgloss.JoinHorizontal(lipgloss.Top,
+				caller,
+				lipgloss.PlaceHorizontal(w-4-lipgloss.Width(caller)-lipgloss.Width(tags.String()), lipgloss.Center, ""),
+				tags.String(),
+			),
+		)
 
 		message := tui.Render(log.message, opts.Left, opts.Padding(1, 0), opts.Width(w-4))
 		tui.Concat(&l, logTitle.String(), message)
-		ls = append(ls, l.String())
+		tui.Concat(&page, l.String())
 	}
 
-	fmt.Print(page.Render(lipgloss.JoinVertical(lipgloss.Left, ls...)))
+	fmt.Print(page.String())
 }
