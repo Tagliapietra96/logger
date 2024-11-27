@@ -2,85 +2,60 @@ package logger
 
 import (
 	"fmt"
-	"strings"
-	"time"
+	"os"
 
-	"github.com/mattn/go-runewidth"
+	"github.com/Tagliapietra96/tui"
+	"github.com/Tagliapietra96/tui/opts"
+	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/x/term"
 )
 
-func addRigthPadding(s string, width int) string {
-	l := runewidth.StringWidth(s)
-	if l >= width {
-		return s
+// getTerminalSize function returns the width and height of the terminal.
+// It returns the width and height of the terminal as integers.
+// If the terminal size cannot be determined, it returns 0, 0.
+func getTerminalSize() (int, int) {
+	w, h, err := term.GetSize(os.Stdout.Fd())
+	if err != nil {
+		return 0, 0
 	}
-	return s + strings.Repeat(" ", width-l)
+
+	return w, h
 }
 
 func printLogs(logs []*log) {
-	statusWidth := 0
-	contextWidth := 0
-	callerWidth := 0
-	timeWidth := 0
-	weekdayWidth := 0
-
+	w, _ := getTerminalSize()
+	w -= 4
+	page := tui.NewStyle(opts.Margin(1, 2), opts.Width(w))
 	for _, log := range logs {
-		l := runewidth.StringWidth(log.level.String())
-		if l > statusWidth {
-			statusWidth = l
+		l := tui.NewStyle(opts.Padding(1))
+		l = l.Border(lipgloss.NormalBorder(), true)
+		tui.Config(&l, opts.FitWidth(w))
+		color := tui.ColorMuted
+		switch log.level {
+		case Debug:
+			color = tui.ColorLink
+		case Info:
+			color = tui.ColorInfo
+		case Warning:
+			color = tui.ColorWarning
+		case Error:
+			color = tui.ColorError
+		case Fatal:
+			color = tui.ColorAccent
 		}
 
-		l = runewidth.StringWidth(fmt.Sprintf("[%s]", log.tags))
-		if l > contextWidth {
-			contextWidth = l
-		}
+		tui.Config(&l, opts.Color(nil, nil, color))
 
-		l = runewidth.StringWidth(fmt.Sprintf("[%s:%d - function: %s]", log.callerFile, log.callerLine, log.callerFunction))
-		if l > callerWidth {
-			callerWidth = l
-		}
+		logTitle := tui.NewStyle(opts.Color(nil, nil, tui.ColorLightMuted)).Border(lipgloss.NormalBorder(), false, false, true, false)
+		level := tui.Render(log.level.String(), opts.Color(color))
+		timestamp := tui.Render(log.timestamp.String(), opts.Color(tui.ColorMuted), opts.Right, opts.Width(w-2-lipgloss.Width(level)))
+		caller := tui.Render(fmt.Sprintf("at %s:%d - %s", log.callerFile, log.callerLine, log.callerFunction), opts.Color(tui.ColorMuted), opts.Left, opts.Width(w-2))
+		tui.Concat(&logTitle, level, timestamp, "\n", caller)
 
-		l = runewidth.StringWidth(fmt.Sprintf("[%s]", log.timestamp))
-		if l > timeWidth {
-			timeWidth = l
-		}
-
-		t, _ := time.Parse("2006-01-02 15:04:05", log.timestamp.String())
-		wd := t.Weekday().String()
-		l = runewidth.StringWidth(fmt.Sprintf("[%s]", wd))
-		if l > weekdayWidth {
-			weekdayWidth = l
-		}
+		message := tui.Render(log.message, opts.Left, opts.Padding(1, 0, 0, 0), opts.Width(w-2))
+		tui.Concat(&l, logTitle.String(), message)
+		tui.Concat(&page, l.String())
 	}
 
-	for _, log := range logs {
-		var sb strings.Builder
-		if timeWidth > 2 {
-			sb.WriteString(addRigthPadding(fmt.Sprintf("[%s]", log.timestamp), timeWidth))
-		}
-
-		if weekdayWidth > 2 {
-			t, _ := time.Parse("2006-01-02 15:04:05", log.timestamp.String())
-			wd := t.Weekday().String()
-			sb.WriteString(addRigthPadding(fmt.Sprintf("[%s]", wd), weekdayWidth))
-			sb.WriteString(" ")
-		}
-
-		if contextWidth > 2 {
-			sb.WriteString(addRigthPadding(fmt.Sprintf("[%s]", log.tags), contextWidth))
-			sb.WriteString(" ")
-		}
-
-		if statusWidth > 0 {
-			sb.WriteString(addRigthPadding(log.level.String(), statusWidth))
-			sb.WriteString(" ")
-		}
-
-		if callerWidth > 9 {
-			sb.WriteString(addRigthPadding(fmt.Sprintf("[%s:%d - function: %s]", log.callerFile, log.callerLine, log.callerFunction), callerWidth))
-			sb.WriteString(" ")
-		}
-
-		sb.WriteString(log.message)
-		fmt.Println(sb.String())
-	}
+	fmt.Println(page.String())
 }

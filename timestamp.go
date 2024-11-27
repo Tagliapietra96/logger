@@ -10,7 +10,7 @@ func newTimestamp(s string) timestamp {
 type timestamp time.Time
 
 func (t timestamp) String() string {
-	return time.Time(t).Format("2006-01-02 15:04:05")
+	return time.Time(t).Format("Monday 2006-01-02 15:04:05")
 }
 
 // ShowTimestampLevel is an enum to define the level of timestamp information to be shown
