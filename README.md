@@ -28,6 +28,8 @@ Create "alert logs" that trigger real-time notifications for critical events, al
 Logger combines simplicity with powerful features, making it ideal for developers who want a self-contained logging solution that goes beyond traditional file-based logging. Whether you need detailed logs for debugging, instant alerts for critical events, or stylish terminal output, Logger has you covered.
 With Logger, you get a complete, lightweight logging solution that is visually engaging and ready to meet your application's logging needs.
 
+---
+
 
 ## Usage
 ### Install the Package
@@ -56,7 +58,6 @@ func main() {
 ### Advanced Configuration
 Logger provides several options to customize how logs are stored, formatted, and displayed. Below are detailed configurations to tailor the logger to your needs.
 
----
 
 1. **Setting the Log Storage Folder**
 
@@ -69,7 +70,6 @@ log.Folder("~/projects/my-logs/")
 ```
 > **Note:** Ensure the specified folder exists and has the necessary write permissions.
 
----
 
 2. **Configuring Log Output Format (Inline vs Block)**
 
@@ -85,7 +85,6 @@ log.Inline(false)
 > **Inline Mode:** Suitable for quick, concise debugging.
 > **Block Mode:** Ideal for comprehensive, formatted log displays with better readability.
 
----
 
 3. **Customizing Caller Information Display**
 
@@ -106,7 +105,6 @@ log.Caller(logger.ShowCallerFunction)
 ```
 > **Use Case:** Showing the caller details is useful for debugging complex applications where knowing the exact source of a log is critical.
 
----
 
 4. **Configuring Timestamp Display**
 
@@ -128,7 +126,6 @@ log.Timestamp(logger.ShowFullTimestamp)
 > - **Default Format:** `2006-01-02 15:04:05`
 > - **Full Timestamp Example:** `Monday 2006-01-02 15:04:05`
 
----
 
 5. **Managing Tags for Logs**
 
@@ -148,7 +145,6 @@ log.SetTags("new-tag1", "new-tag2")
 log.SetTags()  // Now the logger has no tags
 ```
 
----
 
 6. **Configuring Fatal Notifications**
 
@@ -161,7 +157,6 @@ log.SetFatal("MyApp - CRITICAL ERROR", "Oops! Something went wrong. Check the lo
 > - **Default Title:** `"Fatal"`
 > - **Default Message:** `"An error occurred, please check the logs for more information"`
 
----
 
 These configurations allow you to fully customize your logging setup, ensuring that the logs are both informative and easy to manage, while maintaining flexibility in how they are displayed and stored.
 
@@ -184,10 +179,12 @@ log2 := log.Copy()
 log2.Tags("new-tag") // Now log2 has ["initial", "setup", "new-tag"]
 log2.Caller(logger.HideCaller) // Different caller visibility from original
 ```
+> #### Use Cases:
+> - **Independent Logging for Different Contexts:** Use the same core configuration but apply different tags for logging in different parts of your application (e.g., "auth", "database").
+> - **Debugging Different Modules Separately:** Keep the original logger for general application logs and use the copied instance to focus on specific modules without altering the primary configuration.
+> - **Isolated Fatal Handling:** Customize fatal notifications independently for various modules while retaining a shared base configuration.
+> 
+> The `Copy` feature enhances flexibility by enabling modular and context-aware logging configurations while maintaining a consistent base setup across different > components of your application.
 
-#### Use Cases:
-- **Independent Logging for Different Contexts:** Use the same core configuration but apply different tags for logging in different parts of your application (e.g., "auth", "database").
-- **Debugging Different Modules Separately:** Keep the original logger for general application logs and use the copied instance to focus on specific modules without altering the primary configuration.
-- **Isolated Fatal Handling:** Customize fatal notifications independently for various modules while retaining a shared base configuration.
 
-The `Copy` feature enhances flexibility by enabling modular and context-aware logging configurations while maintaining a consistent base setup across different components of your application.
+
