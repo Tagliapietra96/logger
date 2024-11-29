@@ -371,3 +371,25 @@ func main() {
 - **Backup and Archival:** Periodically export logs for long-term storage in .log or .csv format.
 - **Data Integration:** Export logs in .json format for integration with external tools such as ELK Stack or custom data pipelines.
 - **Auditing and Reporting:** Generate .csv exports filtered by date range or tags to create detailed audit trails or compliance reports.
+
+## Conclusion
+Thank you for exploring **Logger**, a lightweight yet powerful logging system designed to simplify log management for CLI applications. With its user-friendly API, flexible configuration options, and seamless SQLite integration, Logger helps keep your logs organized and accessible. Whether you're building a small utility or a robust command-line tool, Logger offers the essential features to track and analyze application events effectively.
+
+### Important Note ⚠️
+Please note that **Logger** has been thoroughly tested only in **CLI applications** running on **Unix-based systems** (Linux, macOS, etc.). While it may work in other environments—such as GUI applications or non-Unix platforms—there’s no guarantee of full compatibility or consistent behavior in these contexts. If you use Logger outside its tested environments, please proceed with caution, and feel free to share your experience.
+
+### Found a Bug? Have a Suggestion? 💡
+I am committed to making Logger as reliable and useful as possible, and your feedback is invaluable! If you encounter any bugs, unexpected behavior, or have ideas for new features, please open an **issue** on the [GitHub repository](https://github.com/Tagliapietra96/logger/issues). I’ll do my best to address your concerns and improve the library based on your input.
+
+### Acknowledgements 🙌
+Logger wouldn’t be what it is without the amazing contributions of these projects:
+
+- [Charmbracelet Lipgloss](https://github.com/charmbracelet/lipgloss): Provides elegant terminal styling, making the log output visually appealing.
+- [Gen2brain Beeep](https://github.com/gen2brain/beeep): Enables desktop notifications to ensure you never miss critical log events.
+
+I encourage you to visit their repositories, explore their features, and, if you find them useful, consider giving them a ⭐️ to show your support.
+
+### Support Logger ❤️
+If Logger has been helpful in your project, I’d be incredibly grateful if you could leave a **star** ⭐️ on the [GitHub repository](https://github.com/Tagliapietra96/logger). Your support means a lot and helps other developers discover and benefit from Logger.
+
+Thank you for choosing Logger, and happy logging! 🚀
