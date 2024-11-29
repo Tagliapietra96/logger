@@ -381,7 +381,8 @@ Please note that **Logger** has been thoroughly tested only in **CLI application
 ### Found a Bug? Have a Suggestion? 💡
 I am committed to making Logger as reliable and useful as possible, and your feedback is invaluable! If you encounter any bugs, unexpected behavior, or have ideas for new features, please open an **issue** on the [GitHub repository](https://github.com/Tagliapietra96/logger/issues). I’ll do my best to address your concerns and improve the library based on your input.
 
-### Acknowledgements 🙌
+### Acknowledgements 🙌
+
 Logger wouldn’t be what it is without the amazing contributions of these projects:
 
 - [Charmbracelet Lipgloss](https://github.com/charmbracelet/lipgloss): Provides elegant terminal styling, making the log output visually appealing.
