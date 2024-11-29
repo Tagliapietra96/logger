@@ -59,7 +59,7 @@ func main() {
 Logger provides several options to customize how logs are stored, formatted, and displayed. Below are detailed configurations to tailor the logger to your needs.
 
 
-1. #### Setting the Log Storage Folder
+#### Setting the Log Storage Folder
 By default, the logs are stored in an SQLite database in the current working directory. You can change the storage location with the `Folder` method:
 ```go
 log := logger.New()
@@ -70,7 +70,7 @@ log.Folder("~/projects/my-logs/")
 > **Note:** Ensure the specified folder exists and has the necessary write permissions.
 
 
-2. #### Configuring Log Output Format (Inline vs Block)
+#### Configuring Log Output Format (Inline vs Block)
 You can control how logs are printed to the terminal. Logs can be displayed in a compact, single-line format (`inline`), or in a more detailed, block format, where each log is presented as a card-like entry (`block`).
 
 ```go
@@ -84,7 +84,7 @@ log.Inline(false)
 > **Block Mode:** Ideal for comprehensive, formatted log displays with better readability.
 
 
-3. #### Customizing Caller Information Display
+#### Customizing Caller Information Display
 Control how much information about the function calling the logger is shown. You can hide it completely, or display varying levels of detail:
 
 ```go
@@ -103,7 +103,7 @@ log.Caller(logger.ShowCallerFunction)
 > **Use Case:** Showing the caller details is useful for debugging complex applications where knowing the exact source of a log is critical.
 
 
-4. #### Configuring Timestamp Display
+#### Configuring Timestamp Display
 Decide how much timestamp information you want in your logs. You can hide it entirely or choose from different levels of detail:
 
 ```go
@@ -123,7 +123,7 @@ log.Timestamp(logger.ShowFullTimestamp)
 > - **Full Timestamp Example:** `Monday 2006-01-02 15:04:05`
 
 
-5. #### Managing Tags for Logs
+#### Managing Tags for Logs
 Tags help categorize logs, making it easier to filter and search. You can add or remove tags dynamically.
 
 ```go
@@ -141,7 +141,7 @@ log.SetTags()  // Now the logger has no tags
 ```
 
 
-6. #### Configuring Fatal Notifications
+#### Configuring Fatal Notifications
 Customize the message and title for critical errors using the `SetFatal` method. This is particularly useful for displaying user-friendly or context-specific messages.
 
 ```go
@@ -154,7 +154,7 @@ log.SetFatal("MyApp - CRITICAL ERROR", "Oops! Something went wrong. Check the lo
 
 These configurations allow you to fully customize your logging setup, ensuring that the logs are both informative and easy to manage, while maintaining flexibility in how they are displayed and stored.
 
-7. #### Creating a Copy of the Logger Configuration
+#### Creating a Copy of the Logger Configuration
 Logger allows you to create an exact copy of the current logger instance using the `Copy` method. This is useful when you want to reuse the same logging configuration but apply it with different tags or additional settings without modifying the original logger.
 
 ```go
@@ -179,52 +179,49 @@ log2.Caller(logger.HideCaller) // Different caller visibility from original
 > 
 > The `Copy` feature enhances flexibility by enabling modular and context-aware logging configurations while maintaining a consistent base setup across different > components of your application.
 
+
 ## Log Management Functionality
 Logger provides three primary ways to manage logs: saving them to the SQLite database, printing them directly to the console without persistence, and retrieving and printing existing logs from the database. This section details these functionalities, offering examples and explanations for each.
 
-1. ### Saving Logs to the Database
-    Logs can be saved to the database using various log levels such as Debug, Info, Warn, Error, and Fatal. Each method formats the provided message and stores it in the SQLite database with optional tags and metadata. The Fatal log type also triggers an alert and exits the program.
+### Saving Logs to the Database
+Logs can be saved to the database using various log levels such as Debug, Info, Warn, Error, and Fatal. Each method formats the provided message and stores it in the SQLite database with optional tags and metadata. The Fatal log type also triggers an alert and exits the program.
 
-    #### Example Usage:
+#### Example Usage:
+
+```go
+package main
+import (
+    "github.com/Tagliapietra96/logger"
     
-    ```go
-    package main
-
-    import (
-        "github.com/Tagliapietra96/logger"
-        
-        "time"
-    )
-
-    func main() {
-        log := logger.New()
-
-        msg := "initializing components"
-
-        // Create different log types and save them to the database
-        log.Debug("Debug message: %s", msg)
-        log.Info("App started at: %s", time.Now().Format("2006-01-02 15:04:05"))
-        log.Error("oh no! an error")
-
-        err := myFunc()
-        if err != nil {
-            // Fatal log - triggers alert and exits
-            log.Fatal(err)
-        }
-
-        err := log.Warn("Potential issue detected: low disk space")
-        if err != nil {
-            panic(err)
-        }
+    "time"
+)
+func main() {
+    log := logger.New()
+    msg := "initializing components"
+    // Create different log types and save them to the database
+    log.Debug("Debug message: %s", msg)
+    log.Info("App started at: %s", time.Now().Format("2006-01-02 15:04:05"))
+    log.Error("oh no! an error")
+    err := myFunc()
+    if err != nil {
+        // Fatal log - triggers alert and exits
+        log.Fatal(err)
     }
-    ```
-    #### Key Details:
-    - **Formatting:** Uses fmt.Sprintf for message formatting.
-    - **Persistence:** Logs are stored in the SQLite database.
-    - **Error Handling:** Each method returns an error if log creation fails.
-    - **Alerts:** Fatal logs trigger alerts using the beeep package and terminate the application.
-    #### Use Cases:
-    - Tracking critical system events with persistent logs.
-    - Debugging issues by storing logs for later retrieval and analysis.
-    - Immediate notification of unrecoverable errors.
+    err := log.Warn("Potential issue detected: low disk space")
+    if err != nil {
+        panic(err)
+    }
+}
+```
+
+#### Key Details:
+- **Formatting:** Uses fmt.Sprintf for message formatting.
+- **Persistence:** Logs are stored in the SQLite database.
+- **Error Handling:** Each method returns an error if log creation fails.
+- **Alerts:** Fatal logs trigger alerts using the beeep package and terminate the application.
+
+#### Use Cases:
+- Tracking critical system events with persistent logs.
+- Debugging issues by storing logs for later retrieval and analysis.
+- Immediate notification of unrecoverable errors.
 
