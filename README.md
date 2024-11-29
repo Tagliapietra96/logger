@@ -22,9 +22,12 @@ Easily export log data from the SQLite database in various formats:
 - **LOG:** Traditional plain text format for compatibility with other log systems.
 ### Alert Log System
 Create "alert logs" that trigger real-time notifications for critical events, allowing immediate response to important issues. Alerts are powered by the [`gen2brain/beeep`](https://github.com/gen2brain/beeep) package, which provides cross-platform notifications via native system alerts, ensuring you never miss a critical event.
+
+
 ## Why Choose Logger?
 Logger combines simplicity with powerful features, making it ideal for developers who want a self-contained logging solution that goes beyond traditional file-based logging. Whether you need detailed logs for debugging, instant alerts for critical events, or stylish terminal output, Logger has you covered.
 With Logger, you get a complete, lightweight logging solution that is visually engaging and ready to meet your application's logging needs.
+
 
 ## Usage
 ### Install the Package
@@ -187,4 +190,4 @@ log2.Caller(logger.HideCaller) // Different caller visibility from original
 - **Debugging Different Modules Separately:** Keep the original logger for general application logs and use the copied instance to focus on specific modules without altering the primary configuration.
 - **Isolated Fatal Handling:** Customize fatal notifications independently for various modules while retaining a shared base configuration.
 
-The Copy feature enhances flexibility by enabling modular and context-aware logging configurations while maintaining a consistent base setup across different components of your application.
+The `Copy` feature enhances flexibility by enabling modular and context-aware logging configurations while maintaining a consistent base setup across different components of your application.
