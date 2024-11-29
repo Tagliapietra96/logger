@@ -161,3 +161,30 @@ log.SetFatal("MyApp - CRITICAL ERROR", "Oops! Something went wrong. Check the lo
 ---
 
 These configurations allow you to fully customize your logging setup, ensuring that the logs are both informative and easy to manage, while maintaining flexibility in how they are displayed and stored.
+
+7. **Creating a Copy of the Logger Configuration**
+
+Logger allows you to create an exact copy of the current logger instance using the `Copy` method. This is useful when you want to reuse the same logging configuration but apply it with different tags or additional settings without modifying the original logger.
+
+```go
+log := logger.New()
+
+// Customize the original logger configuration
+log.Folder("~/projects/my-logs/")
+log.Tags("initial", "setup")
+log.Caller(logger.ShowCallerFile)
+
+// Create a copy of the existing logger
+log2 := log.Copy()
+
+// Modify the copied logger independently
+log2.Tags("new-tag") // Now log2 has ["initial", "setup", "new-tag"]
+log2.Caller(logger.HideCaller) // Different caller visibility from original
+```
+
+#### Use Cases:
+- **Independent Logging for Different Contexts:** Use the same core configuration but apply different tags for logging in different parts of your application (e.g., "auth", "database").
+- **Debugging Different Modules Separately:** Keep the original logger for general application logs and use the copied instance to focus on specific modules without altering the primary configuration.
+- **Isolated Fatal Handling:** Customize fatal notifications independently for various modules while retaining a shared base configuration.
+
+The Copy feature enhances flexibility by enabling modular and context-aware logging configurations while maintaining a consistent base setup across different components of your application.
