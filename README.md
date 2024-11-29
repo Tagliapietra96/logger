@@ -179,12 +179,14 @@ log2.Caller(logger.HideCaller) // Different caller visibility from original
 > 
 > The `Copy` feature enhances flexibility by enabling modular and context-aware logging configurations while maintaining a consistent base setup across different > components of your application.
 
-## Log Management Functionality
+## Log Management Functionality
 Logger provides three primary ways to manage logs: saving them to the SQLite database, printing them directly to the console without persistence, and retrieving and printing existing logs from the database. This section details these functionalities, offering examples and explanations for each.
 
 1. ### Saving Logs to the Database
     Logs can be saved to the database using various log levels such as Debug, Info, Warn, Error, and Fatal. Each method formats the provided message and stores it in the SQLite database with optional tags and metadata. The Fatal log type also triggers an alert and exits the program.
+
     #### Example Usage:
+    
     ```go
     package main
 
@@ -216,12 +218,12 @@ Logger provides three primary ways to manage logs: saving them to the SQLite dat
         }
     }
     ```
-    #### Key Details:
+    #### Key Details:
     - **Formatting:** Uses fmt.Sprintf for message formatting.
     - **Persistence:** Logs are stored in the SQLite database.
     - **Error Handling:** Each method returns an error if log creation fails.
     - **Alerts:** Fatal logs trigger alerts using the beeep package and terminate the application.
-    #### Use Cases:
+    #### Use Cases:
     - Tracking critical system events with persistent logs.
     - Debugging issues by storing logs for later retrieval and analysis.
     - Immediate notification of unrecoverable errors.
