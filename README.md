@@ -179,5 +179,50 @@ log2.Caller(logger.HideCaller) // Different caller visibility from original
 > 
 > The `Copy` feature enhances flexibility by enabling modular and context-aware logging configurations while maintaining a consistent base setup across different > components of your application.
 
+## Log Management Functionality
+Logger provides three primary ways to manage logs: saving them to the SQLite database, printing them directly to the console without persistence, and retrieving and printing existing logs from the database. This section details these functionalities, offering examples and explanations for each.
 
+1. ### Saving Logs to the Database
+    Logs can be saved to the database using various log levels such as Debug, Info, Warn, Error, and Fatal. Each method formats the provided message and stores it in the SQLite database with optional tags and metadata. The Fatal log type also triggers an alert and exits the program.
+    #### Example Usage:
+    ```go
+    package main
+
+    import (
+        "github.com/Tagliapietra96/logger"
+        
+        "time"
+    )
+
+    func main() {
+        log := logger.New()
+
+        msg := "initializing components"
+
+        // Create different log types and save them to the database
+        log.Debug("Debug message: %s", msg)
+        log.Info("App started at: %s", time.Now().Format("2006-01-02 15:04:05"))
+        log.Error("oh no! an error")
+
+        err := myFunc()
+        if err != nil {
+            // Fatal log - triggers alert and exits
+            log.Fatal(err)
+        }
+
+        err := log.Warn("Potential issue detected: low disk space")
+        if err != nil {
+            panic(err)
+        }
+    }
+    ```
+    #### Key Details:
+    - **Formatting:** Uses fmt.Sprintf for message formatting.
+    - **Persistence:** Logs are stored in the SQLite database.
+    - **Error Handling:** Each method returns an error if log creation fails.
+    - **Alerts:** Fatal logs trigger alerts using the beeep package and terminate the application.
+    #### Use Cases:
+    - Tracking critical system events with persistent logs.
+    - Debugging issues by storing logs for later retrieval and analysis.
+    - Immediate notification of unrecoverable errors.
 
