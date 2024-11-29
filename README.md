@@ -311,3 +311,63 @@ func main() {
 - **Postmortem Analysis:** Retrieve logs after a critical failure to perform in-depth analysis and identify root causes. The `queries` sub-package can streamline complex queries for these scenarios.
 - **Selective Viewing:** View logs filtered by level, tags, or other criteria for efficient debugging and issue tracking. Use predefined `QueryOption` from the `queries` sub-package to expedite setup.
 - **Audit Trail Creation:** Query logs from specific date ranges to create detailed audit trails. The `queries` package provides options to filter by time windows or log levels for compliance and reporting.
+
+
+## Export Functionality
+The `Export` method in the `logger` package provides a powerful way to export logs from the SQLite database to different file formats. This feature supports exporting logs based on specified query options, offering flexibility for different use cases such as data analysis, archival, or reporting.
+
+### Key Features
+
+#### Export Formats:
+The `ExportType` parameter allows exporting logs in one of the following formats:
+- **LOG:** Exports logs in a plain `.log` text file.
+- **JSON:** Exports logs in a structured `.json` file, ideal for further data processing or integration with other systems.
+- **CSV:** Exports logs in a `.csv` file, suitable for importing into spreadsheet software or databases for analysis.
+
+#### Customizable Queries:
+The method accepts `QueryOption` parameters, enabling fine-grained control over which logs to export. You can filter by log level, tags, date ranges, or other criteria. Leverage the `github.com/Tagliapietra96/logger/queries` sub-package for ready-to-use query options.
+
+#### Export Location:
+The exported file will be saved in the folder path configured in the `Logger` instance using the `Folder` method. By default, it uses the folder defined during logger setup.
+
+#### Return Values:
+- **File Path:** The method returns the full path to the exported file.
+- **Error Handling:** If the export fails, it returns an error describing the issue.
+
+### Example Usage
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/Tagliapietra96/logger"
+	"github.com/Tagliapietra96/logger/queries"
+)
+
+func main() {
+	log := logger.New()
+	log.Folder("./logs") // Set the export folder
+
+	// Export logs as a JSON file filtered by level and tags
+	filePath, err := log.Export(logger.JSON, queries.LevelEqual(logger.Info), queries.HasTags("auth"))
+	if err != nil {
+		fmt.Println("Error exporting logs:", err)
+		return
+	}
+	fmt.Println("Logs exported to:", filePath)
+
+	// Export logs within a specific date range in CSV format
+	filePath, err = log.Export(logger.CSV, queries.DateBetween(time.Now().Add(-24*time.Hour), time.Now()))
+	if err != nil {
+		fmt.Println("Error exporting logs:", err)
+		return
+	}
+	fmt.Println("Logs exported to:", filePath)
+}
+```
+
+#### Use Cases
+
+- **Backup and Archival:** Periodically export logs for long-term storage in .log or .csv format.
+- **Data Integration:** Export logs in .json format for integration with external tools such as ELK Stack or custom data pipelines.
+- **Auditing and Reporting:** Generate .csv exports filtered by date range or tags to create detailed audit trails or compliance reports.
