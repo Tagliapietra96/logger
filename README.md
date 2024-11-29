@@ -3,7 +3,7 @@ Logger is a Go package that provides a versatile and efficient logging system de
 ## Features
 ### SQLite-Based Logging
 Logs are stored in a lightweight SQLite database, ensuring persistence and easy retrieval without relying on external systems.
-### Flexible Filtering and Configurable Terminal Output
+### Flexible Filtering and Configurable Terminal Output
 Quickly filter logs by various criteria (e.g., log levels, timestamps, tags) and print them directly to the terminal for debugging or analysis. Using the powerful [`charmbracelet/lipgloss`](https://github.com/charmbracelet/lipgloss) package, Logger provides styled terminal output with predefined, visually appealing formats. You can customize the visibility and detail level of key log components, such as:
 - **Caller Information:** Choose whether to display or hide details like file names, line numbers, and function names.
 - **Timestamps:** Include or exclude timestamps or adjust their level of precision.
@@ -330,7 +330,7 @@ The method accepts `QueryOption` parameters, enabling fine-grained control over 
 #### Export Location:
 The exported file will be saved in the folder path configured in the `Logger` instance using the `Folder` method. By default, it uses the folder defined during logger setup.
 
-#### Return Values:
+#### Return Values:
 - **File Path:** The method returns the full path to the exported file.
 - **Error Handling:** If the export fails, it returns an error describing the issue.
 
@@ -366,7 +366,7 @@ func main() {
 }
 ```
 
-#### Use Cases
+#### Use Cases
 
 - **Backup and Archival:** Periodically export logs for long-term storage in .log or .csv format.
 - **Data Integration:** Export logs in .json format for integration with external tools such as ELK Stack or custom data pipelines.
