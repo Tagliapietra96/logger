@@ -56,6 +56,7 @@ Logger provides several options to customize how logs are stored, formatted, and
 ---
 
 1. **Setting the Log Storage Folder**
+
 By default, the logs are stored in an SQLite database in the current working directory. You can change the storage location with the `Folder` method:
 ```go
 log := logger.New()
@@ -68,6 +69,7 @@ log.Folder("~/projects/my-logs/")
 ---
 
 2. **Configuring Log Output Format (Inline vs Block)**
+
 You can control how logs are printed to the terminal. Logs can be displayed in a compact, single-line format (`inline`), or in a more detailed, block format, where each log is presented as a card-like entry (`block`).
 
 ```go
@@ -83,6 +85,7 @@ log.Inline(false)
 ---
 
 3. **Customizing Caller Information Display**
+
 Control how much information about the function calling the logger is shown. You can hide it completely, or display varying levels of detail:
 
 ```go
@@ -103,6 +106,7 @@ log.Caller(logger.ShowCallerFunction)
 ---
 
 4. **Configuring Timestamp Display**
+
 Decide how much timestamp information you want in your logs. You can hide it entirely or choose from different levels of detail:
 
 ```go
@@ -118,12 +122,13 @@ log.Timestamp(logger.ShowDateTime)
 // Display the full timestamp with the day of the week included
 log.Timestamp(logger.ShowFullTimestamp)
 ```
-> **Default Format:** `2006-01-02 15:04:05`
-> **Full Timestamp Example:** `Monday 2006-01-02 15:04:05`
+> - **Default Format:** `2006-01-02 15:04:05`
+> - **Full Timestamp Example:** `Monday 2006-01-02 15:04:05`
 
 ---
 
 5. **Managing Tags for Logs**
+
 Tags help categorize logs, making it easier to filter and search. You can add or remove tags dynamically.
 
 ```go
@@ -143,14 +148,15 @@ log.SetTags()  // Now the logger has no tags
 ---
 
 6. **Configuring Fatal Notifications**
+
 Customize the message and title for critical errors using the `SetFatal` method. This is particularly useful for displaying user-friendly or context-specific messages.
 
 ```go
 // Set a custom title and message for fatal error notifications
 log.SetFatal("MyApp - CRITICAL ERROR", "Oops! Something went wrong. Check the logs.")
 ```
-> **Default Title:** `"Fatal"`
-> **Default Message:** `"An error occurred, please check the logs for more information"`
+> - **Default Title:** `"Fatal"`
+> - **Default Message:** `"An error occurred, please check the logs for more information"`
 
 ---
 
