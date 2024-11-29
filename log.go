@@ -111,47 +111,6 @@ func (l *log) String() string {
 	)
 }
 
-// LogField represents the fields of the log
-// it is used in the query configuration to specify the fields to be returned
-type LogField int
-
-const (
-	Level          LogField = iota // the level of the log
-	Tags                           // the tags of the log
-	CallerFile                     // the file of the caller
-	Callerline                     // the line of the caller
-	CallerFunction                 // the function of the caller
-	Message                        // the message of the log
-	Timestamp                      // the timestamp of the log
-)
-
-// String returns the string representation of the LogField
-// it returns the label of the field in lowercase used in the database
-func (lf LogField) String() string {
-	var label string
-
-	switch lf {
-	case Level:
-		label = "level"
-	case Tags:
-		label = "tags"
-	case CallerFile:
-		label = "caller_file"
-	case Callerline:
-		label = "caller_line"
-	case CallerFunction:
-		label = "caller_function"
-	case Message:
-		label = "message"
-	case Timestamp:
-		label = "time"
-	default:
-		label = ""
-	}
-
-	return label
-}
-
 // LogLevel represents the level of the log
 //
 //   - Debug: used for debugging purposes

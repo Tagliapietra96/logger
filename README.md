@@ -177,7 +177,7 @@ log2.Caller(logger.HideCaller) // Different caller visibility from original
 > - **Debugging Different Modules Separately:** Keep the original logger for general application logs and use the copied instance to focus on specific modules without altering the primary configuration.
 > - **Isolated Fatal Handling:** Customize fatal notifications independently for various modules while retaining a shared base configuration.
 > 
-> The `Copy` feature enhances flexibility by enabling modular and context-aware logging configurations while maintaining a consistent base setup across different > components of your application.
+> The `Copy` feature enhances flexibility by enabling modular and context-aware logging configurations while maintaining a consistent base setup across different components of your application.
 
 
 ## Log Management Functionality

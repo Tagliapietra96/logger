@@ -27,7 +27,7 @@ func getOrder(order string) string {
 // This is useful for custom queries that are not covered by the other QueryOptions
 // Example:
 //
-//	query := logger.CustomQuery("WHERE level = 1 OR level = 3 ORDER BY time DESC")
+//	queryOpt := queries.CustomQuery("WHERE level = 1 OR level = 3 ORDER BY time DESC")
 //
 // In this example te custom query is very simple, but it can be as complex as needed,
 // as long as it is a valid SQL query.
@@ -159,7 +159,7 @@ func prepareSort(config logger.QueryOption) logger.QueryOption {
 // This is useful to add multiple filters to the query
 // Example:
 //
-//	query := logger.AddFilters(logger.LevelEqual(logger.Info), logger.CallerFileLike("main"))
+//	queryOpt := queries.AddFilters(queries.LevelEqual(logger.Info), queries.CallerFileLike("main"))
 //
 // Note: this metod is useful if you want to use custom QueryOprions to filter the logs
 // If you use the QueryOptions provided by this package, you can avoid to use this method
@@ -177,7 +177,7 @@ func AddFilters(configs ...logger.QueryOption) logger.QueryOption {
 // This is useful to add multiple sorts to the query
 // Example:
 //
-//	query := logger.AddSorts(logger.SortLevel("DESC"), logger.SortTimestamp("ASC"))
+//	queryOpt := queries.AddSorts(logger.SortLevel("DESC"), queries.SortTimestamp("ASC"))
 //
 // Note: this metod is useful if you want to use custom QueryOprions to sort the logs
 // If you use the QueryOptions provided by this package, you can avoid to use this method
@@ -200,8 +200,8 @@ func AddSorts(configs ...logger.QueryOption) logger.QueryOption {
 //
 // Example:
 //
-//	query := logger.AddLimit(10)
-//	query := logger.AddLimit(10, 5)
+//	queryOpt := queries.AddLimit(10)
+//	queryOpt := queries.AddLimit(10, 5)
 //
 // In the first example, the query will have a limit of 10 logs and no offset
 // In the second example, the query will have a limit of 10 logs and an offset of 5
@@ -238,7 +238,7 @@ func AddLimit(limitAndOffset ...int) logger.QueryOption {
 // the logs must have at least one of the given tags
 // Example:
 //
-//	query := logger.HasTags("tag1", "tag2")
+//	queryOpt := queries.HasTags("tag1", "tag2")
 //
 // In this example, the query will return all the logs with the tags set to tag1 or tag2
 // or any other tag with the string "tag1" or "tag2" in its name
@@ -257,7 +257,7 @@ func HasTags(tag string, tags ...string) logger.QueryOption {
 // LevelEqual returns a QueryOption that filters the logs by the given level
 // Example:
 //
-//	query := logger.LevelEqual(logger.Info)
+//	queryOpt := queries.LevelEqual(logger.Info)
 //
 // In this example, the query will return all the logs with the level set to Info
 func LevelEqual(level logger.LogLevel) logger.QueryOption {
@@ -269,7 +269,7 @@ func LevelEqual(level logger.LogLevel) logger.QueryOption {
 // LevelNotEqual returns a QueryOption that filters the logs by the levels different from the given level
 // Example:
 //
-//	query := logger.LevelNotEqual(logger.Info)
+//	queryOpt := queries.LevelNotEqual(logger.Info)
 //
 // In this example, the query will return all the logs with the level different from Info
 func LevelNotEqual(level logger.LogLevel) logger.QueryOption {
@@ -281,7 +281,7 @@ func LevelNotEqual(level logger.LogLevel) logger.QueryOption {
 // LevelGreaterThan returns a QueryOption that filters the logs by the levels greater than the given level
 // Example:
 //
-//	query := logger.LevelGreaterThan(logger.Info) // warning, error, fatal
+//	queryOpt := queries.LevelGreaterThan(logger.Info) // warning, error, fatal
 //
 // In this example, the query will return all the logs with the level greater than Info
 func LevelGreaterThan(level logger.LogLevel) logger.QueryOption {
@@ -293,7 +293,7 @@ func LevelGreaterThan(level logger.LogLevel) logger.QueryOption {
 // LevelLessThan returns a QueryOption that filters the logs by the levels less than the given level
 // Example:
 //
-//	query := logger.LevelLessThan(logger.Info) // debug
+//	queryOpt := queries.LevelLessThan(logger.Info) // debug
 //
 // In this example, the query will return all the logs with the level less than Info
 func LevelLessThan(level logger.LogLevel) logger.QueryOption {
@@ -305,7 +305,7 @@ func LevelLessThan(level logger.LogLevel) logger.QueryOption {
 // LevelBetween returns a QueryOption that filters the logs by the levels between the given start and end levels
 // Example:
 //
-//	query := logger.LevelBetween(logger.Info, logger.Warning) // info, warning
+//	queryOpt := queries.LevelBetween(logger.Info, logger.Warning) // info, warning
 //
 // In this example, the query will return all the logs with the level between Info and Warning
 func LevelBetween(start, end logger.LogLevel) logger.QueryOption {
@@ -314,10 +314,10 @@ func LevelBetween(start, end logger.LogLevel) logger.QueryOption {
 	})
 }
 
-// CallerFileEqual returns a QueryOption that filters the logs by the given file
+// CallerFileLike returns a QueryOption that filters the logs by the given file
 // Example:
 //
-//	query := logger.CallerFileEqual("main.go")
+//	queryOpt := queries.CallerFileLike("main.go")
 //
 // In this example, the query will return all the logs with the caller file set to main.go
 // or any other file with the string "main.go" in its name
@@ -327,10 +327,10 @@ func CallerFileLike(file string) logger.QueryOption {
 	})
 }
 
-// CallerFileNotEqual returns a QueryOption that filters the logs by the files different from the given file
+// CallerFileNotLike returns a QueryOption that filters the logs by the files different from the given file
 // Example:
 //
-//	query := logger.CallerFileNotEqual("main.go")
+//	queryOpt := queries.CallerFileNotLike("main.go")
 //
 // In this example, the query will return all the logs with the caller file different from main.go
 // or any other file without the string "main.go" in its name
@@ -343,7 +343,7 @@ func CallerFileNotLike(file string) logger.QueryOption {
 // CallerLineEqual returns a QueryOption that filters the logs by the given line
 // Example:
 //
-//	query := logger.CallerLineEqual(10)
+//	queryOpt := queries.CallerLineEqual(10)
 //
 // In this example, the query will return all the logs with the caller line set to 10
 func CallerLineEqual(line int) logger.QueryOption {
@@ -355,7 +355,7 @@ func CallerLineEqual(line int) logger.QueryOption {
 // CallerLineNotEqual returns a QueryOption that filters the logs by the lines different from the given line
 // Example:
 //
-//	query := logger.CallerLineNotEqual(10)
+//	queryOpt := queries.CallerLineNotEqual(10)
 //
 // In this example, the query will return all the logs with the caller line different from 10
 func CallerLineNotEqual(line int) logger.QueryOption {
@@ -367,7 +367,7 @@ func CallerLineNotEqual(line int) logger.QueryOption {
 // CallerLineGreaterThan returns a QueryOption that filters the logs by the lines greater than the given line
 // Example:
 //
-//	query := logger.CallerLineGreaterThan(10)
+//	queryOpt := queries.CallerLineGreaterThan(10)
 //
 // In this example, the query will return all the logs with the caller line greater than 10
 func CallerLineGreaterThan(line int) logger.QueryOption {
@@ -379,7 +379,7 @@ func CallerLineGreaterThan(line int) logger.QueryOption {
 // CallerLineLessThan returns a QueryOption that filters the logs by the lines less than the given line
 // Example:
 //
-//	query := logger.CallerLineLessThan(10)
+//	queryOpt := queries.CallerLineLessThan(10)
 //
 // In this example, the query will return all the logs with the caller line less than 10
 func CallerLineLessThan(line int) logger.QueryOption {
@@ -391,7 +391,7 @@ func CallerLineLessThan(line int) logger.QueryOption {
 // CallerLineBetween returns a QueryOption that filters the logs by the lines between the given start and end lines
 // Example:
 //
-//	query := logger.CallerLineBetween(10, 20)
+//	queryOpt := queries.CallerLineBetween(10, 20)
 //
 // In this example, the query will return all the logs with the caller line between 10 and 20
 func CallerLineBetween(start, end int) logger.QueryOption {
@@ -400,10 +400,10 @@ func CallerLineBetween(start, end int) logger.QueryOption {
 	})
 }
 
-// CallerFunctionEqual returns a QueryOption that filters the logs by the given function
+// CallerFunctionLike returns a QueryOption that filters the logs by the given function
 // Example:
 //
-//	query := logger.CallerFunctionEqual("main.main")
+//	queryOpt := queries.CallerFunctionLike("main.main")
 //
 // In this example, the query will return all the logs with the caller function set to main.main
 // or any other function with the string "main.main" in its name
@@ -413,10 +413,10 @@ func CallerFunctionLike(function string) logger.QueryOption {
 	})
 }
 
-// CallerFunctionNotEqual returns a QueryOption that filters the logs by the functions different from the given function
+// CallerFunctionNotLike returns a QueryOption that filters the logs by the functions different from the given function
 // Example:
 //
-//	query := logger.CallerFunctionNotEqual("main.main")
+//	queryOpt := queries.CallerFunctionNotLike("main.main")
 //
 // In this example, the query will return all the logs with the caller function different from main.main
 // or any other function without the string "main.main" in its name
@@ -426,10 +426,10 @@ func CallerFunctionNotLike(function string) logger.QueryOption {
 	})
 }
 
-// MessageEqual returns a QueryOption that filters the logs by the given message
+// MessageLike returns a QueryOption that filters the logs by the given message
 // Example:
 //
-//	query := logger.MessageEqual("error")
+//	queryOpt := queries.MessageLike("error")
 //
 // In this example, the query will return all the logs with the message set to error
 // or any other message with the string "error" in its content
@@ -439,10 +439,10 @@ func MessageLike(message string) logger.QueryOption {
 	})
 }
 
-// MessageNotEqual returns a QueryOption that filters the logs by the messages different from the given message
+// MessageNotLike returns a QueryOption that filters the logs by the messages different from the given message
 // Example:
 //
-//	query := logger.MessageNotEqual("error")
+//	queryOpt := queries.MessageNotLike("error")
 //
 // In this example, the query will return all the logs with the message different from error
 // or any other message without the string "error" in its content
@@ -455,7 +455,7 @@ func MessageNotLike(message string) logger.QueryOption {
 // TimestampEqual returns a QueryOption that filters the logs by the given timestamp
 // Example:
 //
-//	query := logger.TimestampEqual(time.Now())
+//	queryOpt := queries.TimestampEqual(time.Now())
 //
 // In this example, the query will return all the logs with the timestamp set to the current time
 // it consider both date and time
@@ -468,7 +468,7 @@ func TimestampEqual(timestamp time.Time) logger.QueryOption {
 // TimestampNotEqual returns a QueryOption that filters the logs by the timestamps different from the given timestamp
 // Example:
 //
-//	query := logger.TimestampNotEqual(time.Now())
+//	queryOpt := queries.TimestampNotEqual(time.Now())
 //
 // In this example, the query will return all the logs with the timestamp different from the current time
 // it consider both date and time
@@ -481,7 +481,7 @@ func TimestampNotEqual(timestamp time.Time) logger.QueryOption {
 // TimestampGreaterThan returns a QueryOption that filters the logs by the timestamps greater than the given timestamp
 // Example:
 //
-//	query := logger.TimestampGreaterThan(time.Now())
+//	queryOpt := queries.TimestampGreaterThan(time.Now())
 //
 // In this example, the query will return all the logs with the timestamp greater than the current time
 // it consider both date and time
@@ -494,7 +494,7 @@ func TimestampGreaterThan(timestamp time.Time) logger.QueryOption {
 // TimestampLessThan returns a QueryOption that filters the logs by the timestamps less than the given timestamp
 // Example:
 //
-//	query := logger.TimestampLessThan(time.Now())
+//	queryOpt := queries.TimestampLessThan(time.Now())
 //
 // In this example, the query will return all the logs with the timestamp less than the current time
 // it consider both date and time
@@ -507,7 +507,7 @@ func TimestampLessThan(timestamp time.Time) logger.QueryOption {
 // TimestampBetween returns a QueryOption that filters the logs by the timestamps between the given start and end timestamps
 // Example:
 //
-//	query := logger.TimestampBetween(time.Now().Add(-time.Hour), time.Now())
+//	queryOpt := queries.TimestampBetween(time.Now().Add(-time.Hour), time.Now())
 //
 // In this example, the query will return all the logs with the timestamp between one hour ago and the current time
 // it consider both date and time
@@ -520,7 +520,7 @@ func TimestampBetween(start, end time.Time) logger.QueryOption {
 // DateEqual returns a QueryOption that filters the logs by the given date
 // Example:
 //
-//	query := logger.DateEqual(time.Now())
+//	queryOpt := queries.DateEqual(time.Now())
 //
 // In this example, the query will return all the logs with the date set to the current date
 // it consider only the date, not the time
@@ -533,7 +533,7 @@ func DateEqual(date time.Time) logger.QueryOption {
 // DateNotEqual returns a QueryOption that filters the logs by the dates different from the given date
 // Example:
 //
-//	query := logger.DateNotEqual(time.Now())
+//	queryOpt := queries.DateNotEqual(time.Now())
 //
 // In this example, the query will return all the logs with the date different from the current date
 // it consider only the date, not the time
@@ -546,7 +546,7 @@ func DateNotEqual(date time.Time) logger.QueryOption {
 // DateGreaterThan returns a QueryOption that filters the logs by the dates greater than the given date
 // Example:
 //
-//	query := logger.DateGreaterThan(time.Now())
+//	queryOpt := queries.DateGreaterThan(time.Now())
 //
 // In this example, the query will return all the logs with the date greater than the current date
 // it consider only the date, not the time
@@ -559,7 +559,7 @@ func DateGreaterThan(date time.Time) logger.QueryOption {
 // DateLessThan returns a QueryOption that filters the logs by the dates less than the given date
 // Example:
 //
-//	query := logger.DateLessThan(time.Now())
+//	queryOpt := queries.DateLessThan(time.Now())
 //
 // In this example, the query will return all the logs with the date less than the current date
 // it consider only the date, not the time
@@ -572,7 +572,7 @@ func DateLessThan(date time.Time) logger.QueryOption {
 // DateBetween returns a QueryOption that filters the logs by the dates between the given start and end dates
 // Example:
 //
-//	query := logger.DateBetween(time.Now().Add(-24*time.Hour), time.Now())
+//	queryOpt := queries.DateBetween(time.Now().Add(-24*time.Hour), time.Now())
 //
 // In this example, the query will return all the logs with the date between 24 hours ago and the current date
 // it consider only the date, not the time
@@ -585,7 +585,7 @@ func DateBetween(start, end time.Time) logger.QueryOption {
 // SortLevel returns a QueryOption that sorts the logs by the level
 // Example:
 //
-//	query := logger.SortLevel("DESC")
+//	queryOpt := queries.SortLevel("DESC")
 //
 // In this example, the query will return the logs sorted by the level in descending order
 // it accept only "ASC"/"asc" or "DESC"/"desc" as order. If the order is not valid, it will default to "ASC"
@@ -598,7 +598,7 @@ func SortLevel(order string) logger.QueryOption {
 // SortTags returns a QueryOption that sorts the logs by the tags
 // Example:
 //
-//	query := logger.SortTags("ASC")
+//	queryOpt := queries.SortTags("ASC")
 //
 // In this example, the query will return the logs sorted by the tags in ascending order
 // it accept only "ASC"/"asc" or "DESC"/"desc" as order. If the order is not valid, it will default to "ASC"
@@ -611,7 +611,7 @@ func SortCallerFile(order string) logger.QueryOption {
 // SortCallerLine returns a QueryOption that sorts the logs by the line of the caller
 // Example:
 //
-//	query := logger.SortCallerLine("ASC")
+//	queryOpt := queries.SortCallerLine("ASC")
 //
 // In this example, the query will return the logs sorted by the line of the caller in ascending order
 // it accept only "ASC"/"asc" or "DESC"/"desc" as order. If the order is not valid, it will default to "ASC"
@@ -624,7 +624,7 @@ func SortCallerLine(order string) logger.QueryOption {
 // SortCallerFunction returns a QueryOption that sorts the logs by the function of the caller
 // Example:
 //
-//	query := logger.SortCallerFunction("ASC")
+//	queryOpt := queries.SortCallerFunction("ASC")
 //
 // In this example, the query will return the logs sorted by the function of the caller in ascending order
 // it accept only "ASC"/"asc" or "DESC"/"desc" as order. If the order is not valid, it will default to "ASC"
@@ -637,7 +637,7 @@ func SortCallerFunction(order string) logger.QueryOption {
 // SortMessage returns a QueryOption that sorts the logs by the message
 // Example:
 //
-//	query := logger.SortMessage("ASC")
+//	queryOpt := queries.SortMessage("ASC")
 //
 // In this example, the query will return the logs sorted by the message in ascending order
 // it accept only "ASC"/"asc" or "DESC"/"desc" as order. If the order is not valid, it will default to "ASC"
@@ -650,7 +650,7 @@ func SortMessage(order string) logger.QueryOption {
 // SortTimestamp returns a QueryOption that sorts the logs by the timestamp
 // Example:
 //
-//	query := logger.SortTimestamp("ASC")
+//	queryOpt := queries.SortTimestamp("ASC")
 //
 // In this example, the query will return the logs sorted by the timestamp in ascending order
 // it accept only "ASC"/"asc" or "DESC"/"desc" as order. If the order is not valid, it will default to "ASC"
