@@ -184,7 +184,7 @@ log2.Caller(logger.HideCaller) // Different caller visibility from original
 Logger provides three primary ways to manage logs: saving them to the SQLite database, printing them directly to the console without persistence, and retrieving and printing existing logs from the database. This section details these functionalities, offering examples and explanations for each.
 
 ### Saving Logs to the Database
-Logs can be saved to the database using various log levels such as Debug, Info, Warn, Error, and Fatal. Each method formats the provided message and stores it in the SQLite database with optional tags and metadata. The Fatal log type also triggers an alert and exits the program.
+Logs can be saved to the database using various log levels such as `Debug`, `Info`, `Warn`, `Error`, and `Fatal`. Each method formats the provided message and stores it in the SQLite database with optional tags and metadata. The `Fatal` log type also triggers an alert and exits the program.
 
 #### Example Usage:
 
@@ -215,13 +215,54 @@ func main() {
 ```
 
 #### Key Details:
-- **Formatting:** Uses fmt.Sprintf for message formatting.
+- **Formatting:** Uses `fmt.Sprintf` for message formatting.
 - **Persistence:** Logs are stored in the SQLite database.
 - **Error Handling:** Each method returns an error if log creation fails.
-- **Alerts:** Fatal logs trigger alerts using the beeep package and terminate the application.
+- **Alerts:** `Fatal` logs trigger alerts using the `beeep` package and terminate the application.
 
 #### Use Cases:
-- Tracking critical system events with persistent logs.
-- Debugging issues by storing logs for later retrieval and analysis.
-- Immediate notification of unrecoverable errors.
+- **Tracking critical system events** with persistent logs.
+- **Debugging issues** by storing logs for later retrieval and analysis.
+- **Immediate notification** of unrecoverable errors.
 
+
+### Printing Logs Directly to the Console (Without Persistence)
+
+For real-time feedback, logs can be printed directly to the terminal using `PrintDebug`, `PrintInfo`, `PrintWarn`, `PrintError`, and `PrintFatal`. These logs are not saved in the database.
+
+#### Example Usage:
+
+```go
+package main
+
+import (
+    "github.com/Tagliapietra96/logger"
+    
+    "fmt"
+)
+
+func main() {
+    log := logger.New()
+
+    // Print logs directly without saving them to the database
+    log.PrintDebug("Debugging: %s", "initializing cache")
+    log.PrintInfo("Starting process: %s", "data sync")
+    log.PrintWarn("Warning: %s", "deprecated API usage")
+    
+    err := fmt.Errorf("network timeout")
+    log.PrintError("Error: %v", err)
+    
+    // Print fatal log and exit
+    log.PrintFatal(fmt.Errorf("Fatal error: %s", "database connection lost"))
+}
+```
+
+#### Key Details:
+- **Real-Time Output:** Logs are printed directly to the terminal.
+- **No Persistence:** These logs are not stored in the database.
+- **Exit on Fatal:** PrintFatal logs terminate the program after printing.
+
+#### Use Cases:
+- **Debugging in development** environments where persistence is unnecessary.
+- **Immediate visibility** for application events during runtime.
+- **Custom error reporting** without cluttering the database.
