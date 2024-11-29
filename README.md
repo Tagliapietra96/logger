@@ -266,3 +266,48 @@ func main() {
 - **Debugging in development** environments where persistence is unnecessary.
 - **Immediate visibility** for application events during runtime.
 - **Custom error reporting** without cluttering the database.
+
+
+### Printing Logs from the Database
+Logs stored in the database can be queried and printed using PrintLogs. This method supports query options to filter logs based on criteria like level, tags, or date range.
+
+#### Example Usage:
+
+```go
+package main
+
+import (
+	"github.com/Tagliapietra96/logger"
+	"github.com/Tagliapietra96/logger/queries"
+)
+
+func main() {
+    log := logger.New()
+
+    // Print all logs stored in the database
+    log.PrintLogs()
+
+    // Print only "Error" level logs
+    log.PrintLogs(queries.LevelEqual(logger.Error))
+
+    // Print only 10 logs
+    log.PrintLogs(queries.AddLimit(10))
+
+    // Print the last 10 logs with "Error" level
+    log.PrintLogs(
+        queries.LevelEqual(logger.Error),
+        queries.AddLimit(10),
+        queries.SortTimestamp("desc")
+    )
+}
+```
+
+#### Key Details
+- **Flexible Querying:** Use `QueryOption` to filter logs by level, tags, or date range. The package also includes the sub-package `github.com/Tagliapietra96/logger/queries`, which provides a comprehensive list of ready-to-use `QueryOption` instances that cover most common use cases, simplifying complex query creation.
+- **Database Retrieval:** Retrieves logs from SQLite and prints them in the configured format, ensuring consistency between stored and displayed data.
+- **Inline or Block Output:** Logs can be printed inline (single-line log entries) or in block format (each log displayed as a separate card-like structure), allowing for flexible presentation.
+
+#### Use Cases
+- **Postmortem Analysis:** Retrieve logs after a critical failure to perform in-depth analysis and identify root causes. The `queries` sub-package can streamline complex queries for these scenarios.
+- **Selective Viewing:** View logs filtered by level, tags, or other criteria for efficient debugging and issue tracking. Use predefined `QueryOption` from the `queries` sub-package to expedite setup.
+- **Audit Trail Creation:** Query logs from specific date ranges to create detailed audit trails. The `queries` package provides options to filter by time windows or log levels for compliance and reporting.
