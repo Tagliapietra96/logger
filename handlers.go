@@ -14,7 +14,6 @@ const table = `
 CREATE TABLE IF NOT EXISTS logs (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	level INTEGER NOT NULL DEFAULT 0,
-	tags TEXT DEFAULT '',
 	caller_file TEXT DEFAULT '',
 	caller_line INTEGER DEFAULT 0,
 	caller_function TEXT DEFAULT '',
@@ -22,36 +21,48 @@ CREATE TABLE IF NOT EXISTS logs (
 	time TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
 );
 
-CREATE INDEX IF NOT EXISTS id_index ON logs (id);
-CREATE INDEX IF NOT EXISTS level_index ON logs (level);
-CREATE INDEX IF NOT EXISTS tags_index ON logs (tags);
-CREATE INDEX IF NOT EXISTS caller_file_index ON logs (caller_file);
-CREATE INDEX IF NOT EXISTS caller_line_index ON logs (caller_line);
-CREATE INDEX IF NOT EXISTS caller_function_index ON logs (caller_function);
-CREATE INDEX IF NOT EXISTS message_index ON logs (message);
-CREATE INDEX IF NOT EXISTS time_index ON logs (time);
+CREATE INDEX IF NOT EXISTS logs_id_index ON logs (id);
+CREATE INDEX IF NOT EXISTS logs_level_index ON logs (level);
+CREATE INDEX IF NOT EXISTS logs_caller_file_index ON logs (caller_file);
+CREATE INDEX IF NOT EXISTS logs_caller_line_index ON logs (caller_line);
+CREATE INDEX IF NOT EXISTS logs_caller_function_index ON logs (caller_function);
+CREATE INDEX IF NOT EXISTS logs_message_index ON logs (message);
+CREATE INDEX IF NOT EXISTS logs_time_index ON logs (time);
+
+CREATE TABLE IF NOT EXISTS tags (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE
+);
+
+CREATE INDEX IF NOT EXISTS tags_id_index ON tags (id);
+CREATE INDEX IF NOT EXISTS tags_name_index ON tags (name);
+
+CREATE TABLE IF NOT EXISTS log_tags (
+    log_id INTEGER NOT NULL,
+    tag_id INTEGER NOT NULL,
+    PRIMARY KEY (log_id, tag_id),
+    FOREIGN KEY (log_id) REFERENCES logs(id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS lt_log_id_index ON log_tags (log_id);
+CREATE INDEX IF NOT EXISTS lt_tag_id_index ON log_tags (tag_id);
 `
 
-const defaultQuery = "SELECT level, tags, caller_file, caller_line, caller_function, message, time FROM logs"
+const defaultQuery = `
+SELECT DISTINCT logs.id, logs.level, logs.caller_file, logs.caller_line, logs.caller_function, logs.message, logs.time
+FROM logs
+INNER JOIN log_tags ON logs.id = log_tags.log_id
+INNER JOIN tags ON log_tags.tag_id = tags.id
+`
 
-func getDBConnection(useBinaryFolder bool) (*sql.DB, error) {
-	var contextFolder, contextLabel string
+type QueryOption func(*strings.Builder)
+
+func getDBConnection(folderPath string) (*sql.DB, error) {
 	var db *sql.DB
 	var err error
 
-	if useBinaryFolder {
-		contextFolder, err = os.Executable()
-		contextLabel = "binary"
-	} else {
-		contextFolder, err = os.Getwd()
-		contextLabel = "working"
-	}
-
-	if err != nil {
-		return nil, errors.New("[logger-pkg] failed to get the current " + contextLabel + " directory: " + err.Error())
-	}
-
-	dbFilePath := filepath.Join(contextFolder, "logs_data.db")
+	dbFilePath := filepath.Join(folderPath, "logs_data.db")
 	_, err = os.Stat(dbFilePath)
 
 	if os.IsNotExist(err) {
@@ -95,8 +106,8 @@ func getDBConnection(useBinaryFolder bool) (*sql.DB, error) {
 	return db, nil
 }
 
-func createNewLog(opts *Logger, level LogLevel, caller *caller, message string) error {
-	db, err := getDBConnection(opts.useBinaryFolder)
+func createNewLog(opts *Logger, log *log) error {
+	db, err := getDBConnection(opts.folderPath)
 	if err != nil {
 		return err
 	}
@@ -107,15 +118,50 @@ func createNewLog(opts *Logger, level LogLevel, caller *caller, message string) 
 		return errors.New("[logger-pkg] failed to create a new log: " + err.Error())
 	}
 
-	stmt, err := tx.Prepare("INSERT INTO logs (level, tags, caller_file, caller_line, caller_function, message) VALUES (?, ?, ?, ?, ?, ?);")
+	logstmt, err := tx.Prepare("INSERT INTO logs (level, caller_file, caller_line, caller_function, message) VALUES (?, ?, ?, ?, ?);")
 	if err != nil {
 		return errors.New("[logger-pkg] failed to create a new log: " + err.Error())
 	}
+	defer logstmt.Close()
 
-	_, err = stmt.Exec(int(level), strings.Join(opts.tags, ","), caller.file, caller.line, caller.funcion, message)
+	result, err := logstmt.Exec(int(log.level), log.callerFile, log.callerLine, log.callerFunction, log.message)
 	if err != nil {
 		tx.Rollback()
 		return errors.New("[logger-pkg] failed to create a new log: " + err.Error())
+	}
+
+	logId, err := result.LastInsertId()
+	if err != nil || logId < 1 {
+		tx.Rollback()
+		return errors.New("[logger-pkg] failed to create a new log: " + err.Error())
+	}
+
+	if len(log.tags) > 0 {
+		for _, tag := range log.tags {
+			tagstmt, err := tx.Prepare("INSERT OR IGNORE INTO tags (name) VALUES (?);")
+			if err != nil {
+				return errors.New("[logger-pkg] failed to create a new log: " + err.Error())
+			}
+			defer tagstmt.Close()
+
+			_, err = tagstmt.Exec(tag)
+			if err != nil {
+				tx.Rollback()
+				return errors.New("[logger-pkg] failed to create a new log: " + err.Error())
+			}
+
+			linkstmt, err := tx.Prepare("INSERT INTO log_tags (log_id, tag_id) VALUES (?, (SELECT id FROM tags WHERE name = ?));")
+			if err != nil {
+				return errors.New("[logger-pkg] failed to create a new log: " + err.Error())
+			}
+			defer linkstmt.Close()
+
+			_, err = linkstmt.Exec(logId, tag)
+			if err != nil {
+				tx.Rollback()
+				return errors.New("[logger-pkg] failed to create a new log: " + err.Error())
+			}
+		}
 	}
 
 	err = tx.Commit()
@@ -127,8 +173,8 @@ func createNewLog(opts *Logger, level LogLevel, caller *caller, message string) 
 	return nil
 }
 
-func queryLogs(configs ...QueryConfiguration) ([]*log, error) {
-	db, err := getDBConnection(false)
+func queryLogs(opts *Logger, configs ...QueryOption) ([]*log, error) {
+	db, err := getDBConnection(opts.folderPath)
 	if err != nil {
 		return nil, err
 	}
@@ -148,18 +194,22 @@ func queryLogs(configs ...QueryConfiguration) ([]*log, error) {
 
 	var logs []*log
 	for rows.Next() {
-		var level int
-		var tags, callerFile, callerFunction, message, time string
-		var callerLine int
+		var id, level, callerLine int
+		var callerFile, callerFunction, message, time string
 
-		err = rows.Scan(&level, &tags, &callerFile, &callerLine, &callerFunction, &message, &time)
+		err = rows.Scan(&id, &level, &callerFile, &callerLine, &callerFunction, &message, &time)
 		if err != nil {
 			return nil, errors.New("[logger-pkg] failed to scan the logs: " + err.Error())
 		}
 
+		tags, err := getTagsForLog(db, id)
+		if err != nil {
+			return nil, errors.New("[logger-pkg] failed to get the tags for the logs: " + err.Error())
+		}
+
 		logs = append(logs, &log{
 			level:          LogLevel(level),
-			tags:           strings.Split(tags, ","),
+			tags:           tags,
 			callerFile:     callerFile,
 			callerLine:     callerLine,
 			callerFunction: callerFunction,
@@ -169,4 +219,27 @@ func queryLogs(configs ...QueryConfiguration) ([]*log, error) {
 	}
 
 	return logs, nil
+}
+
+func getTagsForLog(db *sql.DB, logId int) ([]string, error) {
+	tags := make([]string, 0)
+	rows, err := db.Query("SELECT tags.name FROM tags INNER JOIN log_tags ON tags.id = log_tags.tag_id WHERE log_tags.log_id = ?", logId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var tag string
+		if err := rows.Scan(&tag); err != nil {
+			return nil, err
+		}
+		tags = append(tags, tag)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return tags, nil
 }
