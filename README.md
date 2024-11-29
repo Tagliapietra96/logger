@@ -386,7 +386,7 @@ I am committed to making Logger as reliable and useful as possible, and your fee
 Logger wouldn’t be what it is without the amazing contributions of these projects:
 
 - [Charmbracelet Lipgloss](https://github.com/charmbracelet/lipgloss): Provides elegant terminal styling, making the log output visually appealing.
-- [Gen2brain Beeep](https://github.com/gen2brain/beeep): Enables desktop notifications to ensure you never miss critical log events.
+- [Gen2brain Beeep](https://github.com/gen2brain/beeep): Enables desktop notifications to ensure you never miss critical log events. (Licensed under the BSD 2-Clause License. See `THIRD_PARTY_LICENSES.md` for more details.)
 
 I encourage you to visit their repositories, explore their features, and, if you find them useful, consider giving them a ⭐️ to show your support.
 
