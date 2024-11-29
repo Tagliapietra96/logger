@@ -269,7 +269,7 @@ func main() {
 
 
 ### Printing Logs from the Database
-Logs stored in the database can be queried and printed using PrintLogs. This method supports query options to filter logs based on criteria like level, tags, or date range.
+Logs stored in the database can be queried and printed using `PrintLogs`. This method supports query options to filter logs based on criteria like level, tags, or date range.
 
 #### Example Usage:
 
