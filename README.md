@@ -327,7 +327,7 @@ The `ExportType` parameter allows exporting logs in one of the following formats
 #### Customizable Queries:
 The method accepts `QueryOption` parameters, enabling fine-grained control over which logs to export. You can filter by log level, tags, date ranges, or other criteria. Leverage the `github.com/Tagliapietra96/logger/queries` sub-package for ready-to-use query options.
 
-#### Export Location:
+#### Export Location:
 The exported file will be saved in the folder path configured in the `Logger` instance using the `Folder` method. By default, it uses the folder defined during logger setup.
 
 #### Return Values:
