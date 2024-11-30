@@ -60,7 +60,7 @@ Logger provides several options to customize how logs are stored, formatted, and
 
 
 #### Setting the Log Storage Folder
-By default, the logs are stored in an SQLite database in the binary directory (if the apllication isn't build the default is the current working directory). You can change the storage location with the `Folder` method:
+By default, the logs are stored in an SQLite database in the binary directory (if the apllication isn't built the default is the current working directory). You can change the storage location with the `Folder` method:
 ```go
 log := logger.New()
 
