@@ -1,3 +1,38 @@
+# Table of Contents
+1. [Logger - A Lightweight Logging System with Advanced Features](#logger---a-lightweight-logging-system-with-advanced-features)
+2. [Features](#features)
+   - [SQLite-Based Logging](#sqlite-based-logging)
+   - [Flexible Filtering and Configurable Terminal Output](#flexible-filtering-and-configurable-terminal-output)
+   - [Export Logs to Multiple Formats](#export-logs-to-multiple-formats)
+   - [Alert Log System](#alert-log-system)
+3. [Why Choose Logger?](#why-choose-logger)
+4. [Usage](#usage)
+   - [Install the Package](#install-the-package)
+   - [Basic Usage](#basic-usage)
+   - [Advanced Configuration](#advanced-configuration)
+     - [Setting the Log Storage Folder](#setting-the-log-storage-folder)
+     - [Configuring Log Output Format (Inline vs Block)](#configuring-log-output-format-inline-vs-block)
+     - [Customizing Caller Information Display](#customizing-caller-information-display)
+     - [Configuring Timestamp Display](#configuring-timestamp-display)
+     - [Managing Tags for Logs](#managing-tags-for-logs)
+     - [Configuring Fatal Notifications](#configuring-fatal-notifications)
+     - [Creating a Copy of the Logger Configuration](#creating-a-copy-of-the-logger-configuration)
+5. [Log Management Functionality](#log-management-functionality)
+   - [Saving Logs to the Database](#saving-logs-to-the-database)
+   - [Printing Logs Directly to the Console (Without Persistence)](#printing-logs-directly-to-the-console-without-persistence)
+   - [Printing Logs from the Database](#printing-logs-from-the-database)
+6. [Export Functionality](#export-functionality)
+   - [Key Features](#key-features)
+   - [Example Usage](#example-usage)
+   - [Use Cases](#use-cases)
+7. [Conclusion](#conclusion)
+8. [Important Note ⚠️](#important-note-️)
+9. [Found a Bug? Have a Suggestion? 💡](#found-a-bug-have-a-suggestion-)
+10. [Acknowledgements 🙌](#acknowledgements-)
+11. [Support Logger ❤️](#support-logger-️)
+12. [License](#license)
+
+
 # Logger - A Lightweight Logging System with Advanced Features
 Logger is a Go package that provides a versatile and efficient logging system designed for applications that require structured log management. With its built-in SQLite integration, filtering capabilities, customizable terminal output, and alert notifications, Logger offers a comprehensive solution for tracking and managing application events.
 ## Features
