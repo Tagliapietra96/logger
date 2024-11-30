@@ -80,8 +80,8 @@ log.Inline(true)
 // Print logs in a block format (default)
 log.Inline(false)  
 ```
-> **Inline Mode:** Suitable for quick, concise debugging.
-> **Block Mode:** Ideal for comprehensive, formatted log displays with better readability.
+> - **Inline Mode:** Suitable for quick, concise debugging.
+> - **Block Mode:** Ideal for comprehensive, formatted log displays with better readability.
 
 
 #### Customizing Caller Information Display
