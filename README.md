@@ -396,5 +396,4 @@ If Logger has been helpful in your project, I’d be incredibly grateful if you 
 Thank you for choosing Logger, and happy logging! 🚀
 
 **License**
-
 [MIT](https://github.com/Tagliapietra96/logger/blob/main/LICENSE)
