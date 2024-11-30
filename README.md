@@ -327,9 +327,6 @@ The `ExportType` parameter allows exporting logs in one of the following formats
 #### Customizable Queries:
 The method accepts `QueryOption` parameters, enabling fine-grained control over which logs to export. You can filter by log level, tags, date ranges, or other criteria. Leverage the `github.com/Tagliapietra96/logger/queries` sub-package for ready-to-use query options.
 
-#### Export Location:
-The exported file will be saved in the folder path configured in the `Logger` instance using the `Folder` method. By default, it uses the folder defined during logger setup.
-
 #### Return Values:
 - **File Path:** The method returns the full path to the exported file.
 - **Error Handling:** If the export fails, it returns an error describing the issue.
@@ -346,7 +343,6 @@ import (
 
 func main() {
 	log := logger.New()
-	log.Folder("./logs") // Set the export folder
 
 	// Export logs as a JSON file filtered by level and tags
 	filePath, err := log.Export(logger.JSON, queries.LevelEqual(logger.Info), queries.HasTags("auth"))
