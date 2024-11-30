@@ -32,6 +32,7 @@
 11. [Support Logger ❤️](#support-logger-️)
 12. [License](#license)
 
+---
 
 # Logger - A Lightweight Logging System with Advanced Features
 Logger is a Go package that provides a versatile and efficient logging system designed for applications that require structured log management. With its built-in SQLite integration, filtering capabilities, customizable terminal output, and alert notifications, Logger offers a comprehensive solution for tracking and managing application events.
