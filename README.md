@@ -1,3 +1,6 @@
+![GitHub release](https://img.shields.io/github/v/release/Tagliapietra96/logger)
+[![Go Reference](https://pkg.go.dev/badge/Tagliapietra96/logger/path.svg)](https://pkg.go.dev/github.com/Tagliapietra96/logger)
+
 # Table of Contents
 1. [Logger - A Lightweight Logging System with Advanced Features](#logger---a-lightweight-logging-system-with-advanced-features)
 2. [Features](#features)
