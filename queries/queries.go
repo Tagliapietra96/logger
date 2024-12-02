@@ -163,7 +163,7 @@ func prepareSort(config logger.QueryOption) logger.QueryOption {
 //
 // Note: this metod is useful if you want to use custom QueryOprions to filter the logs
 // If you use the QueryOptions provided by this package, you can avoid to use this method
-// beacuse every QueryOption already has the logic to add the filter to the query without
+// because every QueryOption already has the logic to add the filter to the query without
 // conflicting with other QueryOptions.
 func AddFilters(configs ...logger.QueryOption) logger.QueryOption {
 	return func(sb *strings.Builder) {
@@ -181,7 +181,7 @@ func AddFilters(configs ...logger.QueryOption) logger.QueryOption {
 //
 // Note: this metod is useful if you want to use custom QueryOprions to sort the logs
 // If you use the QueryOptions provided by this package, you can avoid to use this method
-// beacuse every QueryOption already has the logic to add the sort to the query without
+// because every QueryOption already has the logic to add the sort to the query without
 // conflicting with other QueryOptions.
 func AddSorts(configs ...logger.QueryOption) logger.QueryOption {
 	return func(sb *strings.Builder) {
