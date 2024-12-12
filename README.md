@@ -35,7 +35,6 @@
 9. [Found a Bug? Have a Suggestion? 💡](#found-a-bug-have-a-suggestion-)
 10. [Acknowledgements 🙌](#acknowledgements-)
 11. [Support Logger ❤️](#support-logger-️)
-12. [License](#license)
 
 ---
 
